@@ -1,0 +1,154 @@
+\documentclass[10pt,a4paper,fleqn]{exam}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{fancyeq}
+\usepackage{tikz}
+%\usepackage{tikz-uml}
+\usepackage{mathpartir}
+
+\usepackage[sc]{mathpazo}
+\linespread{1.05}         % Palatino needs more leading (space between lines)
+\usepackage[T1]{fontenc}
+
+% some format settings
+% for hard-bound final submission, use:
+%\setlength{\oddsidemargin}{4.6mm}     % 30 mm left margin - 1 in
+% for soft-bound version and techreport, use instead:
+\setlength{\oddsidemargin}{-0.4mm}    % 25 mm left margin - 1 in
+\setlength{\evensidemargin}{\oddsidemargin}
+\setlength{\topmargin}{-5.4mm}        % 20 mm top margin - 1 in
+\setlength{\textwidth}{160mm}         % 20/25 mm right margin
+\setlength{\textheight}{237mm}        % 20 mm bottom margin
+\setlength{\headheight}{5mm}
+\setlength{\headsep}{5mm}
+\setlength{\parindent}{0mm}
+\setlength{\parskip}{\medskipamount}
+\renewcommand\baselinestretch{1.2} % thesis format (not needed for techreport)
+% don't let large figures hijack entire pages
+\renewcommand\topfraction{.9}
+\renewcommand\textfraction{.1}
+\renewcommand\floatpagefraction{.8}
+
+\pagestyle{headandfoot}
+%\pointsinrightmargin
+%\pointname{ marks}
+%\marginpointname{ marks}
+
+\marksnotpoints 
+
+\hypersetup{  
+  urlcolor=black,
+  linkcolor=black,
+  colorlinks=true  
+}
+
+\titlelabel{\llap{\thetitle\quad}}
+
+\newcommand {\lbrac} {\makebox[0pt]{[\kern-1ex[}}
+\newcommand {\rbrac} {\makebox[0pt]{]\kern-1ex]}}
+\newcommand{\denote}[1]{\lbrac~#1~\rbrac}
+
+\begin{document}
+
+\begin{center}
+\Large Algorithms \\
+\LARGE \textbf{Exercise 4: Data structures II} \\
+\end{center}
+
+\hrule
+
+\vspace{0.5cm}
+
+\marksnotpoints
+\pointsdroppedatright
+\marksnotpoints
+\marginpointname{ \points}
+
+%Some ideas: file systems, scene graphs? operating system stuff (mixing the tress and queues, heaps, etc.?)
+
+%\section{Quadtrees}
+
+%\question A \emph{quadtree} 
+
+Data structures are often explained in an imperative setting. In this exercise, we will look at binomial heaps and red-black trees in a purely functional setting\footnote{This exercise sheet is largely based on \emph{Purely Functional Data Structures} by Chris Okasaki.}. For this exercise, we will use a pure subset of ML\footnote{You may use other languages, as long as you impose the same restrictions there.}. In other words, we are not allowed to use references/mutable values.
+
+\begin{questions}
+
+\section{Purely functional binomial heaps}
+
+\question Binomial heaps are composed of more primitive objects known as binomial trees. Binomial trees are inductively defined as:
+\begin{itemize}
+\item A binomial tree of rank 0 is a singleton node.
+\item A binomial tree of rank $r + 1$ is formed by \emph{linking} two binomial trees of rank $r$, marking one tree the leftmost child of the other.
+\end{itemize}
+\begin{parts}
+\part[1] How many nodes does a binomial tree of rank $r$ contain? \droppoints 
+\part[2] We represent a node in a binomial tree using the following data type:
+\begin{displaymath}
+\mathbf{datatype}~\mathit{tree} = \mathit{Node}~\mathbf{of}~\mathit{int} \times \mathit{int} \times \mathit{tree}~\mathit{list}
+\end{displaymath} 
+Each $\mathit{Node}$ represents a rank (of type $\mathit{int}$), an element (of type $\mathit{int}$), and a list of children (of type $\mathit{tree}~\mathit{list}$). The list of children is maintained in decreasing order of rank, and elements are stored in heap order.
+
+Given two nodes, explain how you would link them so that heap order is maintained. \droppoints 
+\part[2] Define a function $\mathit{link} : \mathit{tree} \to \mathit{tree} \to \mathit{tree}$ based on your answer for the previous question. \droppoints 
+\part[1] A binomial heap is a collection of heap-ordered binomial trees in which no two trees have the same rank. This collection is represented as a list of trees in increasing order of rank:
+\begin{displaymath}
+\mathbf{type}~\mathit{heap} = \mathit{tree}~\mathit{list}
+\end{displaymath}
+Suppose that you have a binomial heap of size $n$. How many trees will this heap contain at most? \droppoints 
+\part[2] Define a function $\mathit{rank} : \mathit{tree} \to \mathit{int}$ which returns the rank of a tree and a function $\mathit{root} : \mathit{tree} \to \mathit{int}$ which returns the value of a tree. \droppoints
+\part[3] We wish to define a recursive function whose typing is $\mathit{insTree} : \mathit{tree} \times \mathit{heap} \to \mathit{heap}$. It should insert a binomial tree (the first argument) into a heap (the second argument) and return the updated heap. Describe an algorithm for this task. \droppoints 
+\part[3] Implement the $\mathit{insTree}$ function. \droppoints 
+\part[2] In order to insert an element (a value of type $\mathit{int}$) into a heap, we need to define a $\mathit{insert} : \mathit{int} \times \mathit{heap} \to \mathit{heap}$ function. Explain how this can be done with the help of $\mathit{insTree}$ and implement your answer. \droppoints 
+\part[2] What is the worst-case time complexity of $\mathit{insert}$ for a binomial heap of size $n$? Justify your answer. \droppoints
+\part[2] In order to define functions which find or remove the minimum element from the binomial heap, we require two auxiliary functions. The first of these helper function is $\mathit{removeMinTree} : \mathit{heap} \to \mathit{tree} \times \mathit{heap}$. In other words, $\mathit{removeMinTree}$ is a function which, given a binomial heap, returns the binomial tree which contains the minimum root element and an updated heap in which the tree containing the minimum root element has been removed. Describe how you would implement such a function. \droppoints 
+\part[2] Implement the recursive $\mathit{removeMinTree}$ function. \droppoints 
+\part[2] Using $\mathit{removeMinTree}$, we can now define a $\mathit{findMin} : \mathit{heap} \to \mathit{int}$ function which returns the smallest root element in the heap. Implement this function. \droppoints 
+\part[3] Implementing a $\mathit{deleteMin} : \mathit{heap} \to \mathit{heap}$ function which removes only the smallest element from the heap and returns the updated heap is a little trickier. With reference to $\mathit{removeMinTree}$, briefly explain how you would go about implementing such a function and where the trickiness comes from. \droppoints 
+\part[5] (CSTs only) Define a $\mathit{merge} : \mathit{heap} \times \mathit{heap} \to \mathit{heap}$ function which merges two binomial heaps. \droppoints 
+\part[2] (CSTs only) Implement $\mathit{deleteMin}$ using $\mathit{merge}$. \droppoints 
+\part[4] The worst-case time complexity of $\mathit{findMin}$ can be improved to $\mathcal{O}(1)$ by modifying the $\mathit{heap}$ type. Discuss how this could be done. \droppoints
+\part[8] (CSTs only) Based on your answer for the previous question, re-implement binomial heaps so that finding the minimum element takes $\mathcal{O}(1)$ time. \droppoints  
+\end{parts}
+
+\section{Purely functional red-black trees}
+
+\question We define the following two types for red-black trees:
+\begin{displaymath}
+\begin{array}{lcl}
+\mathbf{datatype}~\mathit{colour} & = & R \mid B \\
+\mathbf{datatype}~\mathit{tree} & = & \mathit{E} \mid \mathit{T}~\mathbf{of}~\mathit{colour} \times \mathit{tree} \times \mathit{int} \times \mathit{tree}
+\end{array}
+\end{displaymath}
+A tree is either empty (the $E$ constructor) or a node (the $T$ constructor) consisting of a colour, a left sub-tree, a value, and a right sub-tree. We insist that every red-black tree satisfies the following two invariants:
+\begin{enumerate}
+\item No red node has a red child.
+\item Every path from the root to an empty node contains the same number of black nodes.
+\end{enumerate}
+The algorithm for looking up elements in a red-black tree is the same as for any other binary search tree.
+\begin{parts}
+\part[3] Suppose that you have a $\mathit{balance} : \mathit{colour} \times \mathit{tree} \times \mathit{int} \times \mathit{tree} \to \mathit{tree}$ function which, given the values of a node in the tree, balances the node's sub-trees (note: $\mathit{balance}$ assumes that the sub-trees are already mostly sorted and it will not traverse them and runs in $\mathcal{O}(1)$ time -- it will only ensure that the immediate children of the given node do not violate any of the invariants). Using $\mathit{balance}$, discuss how you would implement a $\mathit{insert} : \mathit{tree} \times \mathit{int} \to \mathit{tree}$ function which inserts an element of type $\mathit{int}$ into a red-black tree. \droppoints 
+\part[4] Implementing $\mathit{balance}$ (typing is given above) in a functional language is surprisingly easy. There are only \emph{four} cases in which the tree needs to be balanced. What are they? If you can think of more than four, try the next few questions first and then see if some cases are redundant. \droppoints  
+\part[6] It is easy to test for the four cases using pattern matching. Implement the $\mathit{balance}$ function just by pattern matching on the arguments. \droppoints 
+\part[3] Implement $\mathit{insert}$. \droppoints
+\part[6] What are the worst-case time and space complexities of $\mathit{insert}$? Explain your answer. \droppoints 
+\part[8] Explain how you would write a function $\mathit{fromOrdList} : \mathit{int}~\mathit{list} \to \mathit{tree}$ that converts a sorted list with no duplicates into a red-black tree. Your function should run in $\mathcal{O}(n)$ time. Also, you do not have an infinite amount of memory. \droppoints 
+\part[8] Your $\mathit{balance}$ function is likely going to perform some unnecessary tests in some cases. Suggest how you could split $\mathit{balance}$ into several, smaller functions and how you would modify $\mathit{insert}$ so that no unnecessary tests are performed. \droppoints 
+\end{parts}
+
+%\section{Garbage collection}
+
+%\section{Noughts and crosses}
+
+%\question Game trees...
+%\question brute force
+%\question min max
+%\question alpha-beta pruning
+
+\end{questions}
+\end{document}

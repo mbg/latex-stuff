@@ -1,0 +1,250 @@
+\documentclass[10pt,a4paper,fleqn]{exam}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{fancyeq}
+\usepackage{tikz}
+%\usepackage{tikz-uml}
+\usepackage{mathpartir}
+
+\usepackage[sc]{mathpazo}
+\linespread{1.05}         % Palatino needs more leading (space between lines)
+\usepackage[T1]{fontenc}
+
+% some format settings
+% for hard-bound final submission, use:
+%\setlength{\oddsidemargin}{4.6mm}     % 30 mm left margin - 1 in
+% for soft-bound version and techreport, use instead:
+\setlength{\oddsidemargin}{-0.4mm}    % 25 mm left margin - 1 in
+\setlength{\evensidemargin}{\oddsidemargin}
+\setlength{\topmargin}{-5.4mm}        % 20 mm top margin - 1 in
+\setlength{\textwidth}{160mm}         % 20/25 mm right margin
+\setlength{\textheight}{237mm}        % 20 mm bottom margin
+\setlength{\headheight}{5mm}
+\setlength{\headsep}{5mm}
+\setlength{\parindent}{0mm}
+\setlength{\parskip}{\medskipamount}
+\renewcommand\baselinestretch{1.2} % thesis format (not needed for techreport)
+% don't let large figures hijack entire pages
+\renewcommand\topfraction{.9}
+\renewcommand\textfraction{.1}
+\renewcommand\floatpagefraction{.8}
+
+\pagestyle{headandfoot}
+%\pointsinrightmargin
+%\pointname{ marks}
+%\marginpointname{ marks}
+
+\marksnotpoints 
+
+\hypersetup{  
+  urlcolor=black,
+  linkcolor=black,
+  colorlinks=true  
+}
+
+\titlelabel{\llap{\thetitle\quad}}
+
+\newcommand {\lbrac} {\makebox[0pt]{[\kern-1ex[}}
+\newcommand {\rbrac} {\makebox[0pt]{]\kern-1ex]}}
+\newcommand{\denote}[1]{\lbrac~#1~\rbrac}
+
+\begin{document}
+
+\begin{center}
+\Large Algorithms \\
+\LARGE \textbf{Exercise 3: Data structures I} \\
+\end{center}
+
+\hrule
+
+\vspace{0.5cm}
+
+\marksnotpoints
+\pointsdroppedatright
+\marksnotpoints
+\marginpointname{ \points}
+
+%New this week: marks for each question to give you an idea of how much I expect you to do for each question.
+
+\begin{questions}
+
+\section{Binary trees}
+
+\question In OOP ex1, we implemented \emph{unbalanced} binary trees. Let's talk about them.
+\begin{parts}
+\part[1] Suppose that we wish to insert natural numbers from a list into an (unbalanced) binary tree, one after another. Give an example of a list which would result in a completely unbalanced tree. \droppoints 
+\part[2] What is the worst-case time complexity of inserting an item into an unbalanced binary tree and why? \droppoints 
+\part[2] What is the worst-case time complexity of looking up an item in an unbalanced binary tree and why? \droppoints
+\part A space-efficient way of implementing a binary tree is using an array. Each node in the tree is represented by a position in the array. Given the index of a node within the array, it is possible to calculate the index of its parent, left child, and right child. The skeleton for such an implementation in Java is given below:
+\begin{displaymath}
+\begin{array}{l}
+\mathbf{class}~\mathit{BinaryTree}~\{ \\ 
+\quad \mathbf{private}~\mathbf{int}[]~\mathit{values};\\\\
+\quad \mathbf{public}~\mathit{BinaryTree}(\mathbf{int}~n)~\{ \\
+\quad \quad \mathit{values} = \mathbf{new}~\mathbf{int}[n];\\
+\quad \} \\
+\quad \mathbf{private}~\mathbf{int}~\mathit{getLeft}(\mathbf{int}~\mathit{index})~\{ \quad \texttt{/* TODO */} \quad \} \\
+\quad \mathbf{private}~\mathbf{int}~\mathit{getRight}(\mathbf{int}~\mathit{index})~\{ \quad \texttt{/* TODO */} \quad \} \\
+\quad \mathbf{public}~\mathbf{void}~\mathit{insert}(\mathbf{int}~\mathit{value})~\{ \quad \texttt{/* TODO */} \quad \} \\
+\quad \mathbf{public}~\mathbf{boolean}~\mathit{contains}(\mathbf{int}~\mathit{value})~\{ \quad \texttt{/* TODO */} \quad \} \\
+\}
+\end{array}
+\end{displaymath}
+\begin{subparts}
+\subpart[2] Complete the definitions of the $\mathit{getLeft}$ and $\mathit{getRight}$ methods so that they return the index of the left or right child for a given node. Suppose that the index of the given node is $i$ (named $\mathit{index}$ in the skeleton code), then the left child's position is $2 * i + 1$ and the right child's position is $2 * i + 2$. \droppoints 
+\subpart[4] With reference to the $\mathit{getLeft}$ and $\mathit{getRight}$ methods, explain how you would implement the $\mathit{insert}$ and $\mathit{contains}$ methods.  \droppoints
+\subpart[4] (CSTs only) Implement the $\mathit{insert}$ and $\mathit{contains}$ methods. \droppoints 
+\subpart[1] What is the worst-case space complexity of $\mathit{insert}$? \droppoints 
+\subpart[2] Currently, this implementation can only contain up to $n$-many nodes (including the root). Suggest one way to remove this limit. The tree should still be represented using an array. \droppoints 
+\subpart[4] (CSTs only) Implement what you suggested in your answer to the previous question. \droppoints
+\subpart[6] Discuss what impact your (suggested) changes have on the time complexity of $\mathit{insert}$. \droppoints 
+\subpart[6] Describe how you would modify this implementation of binary trees to make it self-balancing. \droppoints 
+\end{subparts} 
+\end{parts}
+
+\section{Bloom filters}
+
+\question A Bloom filter is a probabilistic data structure that can be used to represent a set. It consists of an array of $m$-many bits and it uses $k$-many hash functions, each of which can map set elements to positions in the array. Primarily, there are two operations which are supported by a Bloom filter: insertions and lookups. In order to insert an element into the Bloom filter, it needs to be run through each of the $k$-many hash functions, resulting in $k$-many positions. All these positions in the array will then be set to 1. In order to query whether an element is in the Bloom filter, you also need to run it through each of the $k$-many hash functions, resulting in $k$-many positions. If the bits at all of those positions are 1, then the element \emph{may} be in the bloom filter. If one or more of the bits are 0, then the element \emph{definitely} isn't in the set.
+\begin{parts}
+\part[3] Sketch an ADT based on the specification above. \droppoints
+\part[2] Suppose that $k=1$. What are the disadvantages of a bloom filter when compared with a hashmap? \droppoints 
+\part[3] Suggest \emph{three} hash functions. \droppoints 
+\part[2] What are the worst-case time complexities of inserting an element and looking up an element? \droppoints 
+\part[2] In a language of your choice, implement a data structure or class for bloom filters. For the moment, this should simply consist of a bit array. It should also be possible to specify the size of the bit array. \droppoints 
+\part[2] (CSTs only) Extend your data structure so that, in addition to the bit array, it can store a list of hash functions. \droppoints 
+\part[2] Implement an $\mathit{insert}$ function (see the specification above). NSTs only: you should use the three hash functions from your answer for part (c). CSTs only: you should run the element that is to be inserted into the set through each of the hash functions in the list. \droppoints 
+\part[2] Implement a $\mathit{query}$ function (see the specification above). NSTs only: you should use the three hash functions from your answer for part (c). CSTs only: you should run the element that is being looked up through each of the hash functions in the list. \droppoints 
+\part[8] (CSTs only, advanced) Modify your insertion and lookup functions so that all hash functions are run in parallel. Discuss whether it makes sense to do this. Provide evidence for your arguments in the form of benchmarks. \droppoints 
+\end{parts}
+
+\section{The concatenate vanishes}
+\question A well-known problem with linked lists is that many operations require $\mathcal{O}(n)$ time. In many languages, we can improve the time complexity by making the list doubly-linked or adding a pointer to the last element. In a purely functional programming language, such as DNH, these workarounds are not possible. In this section, we will \emph{calculate} more efficient functions. Consider the following definition of a function in DNH which concatenates two lists:
+\begin{displaymath}
+\begin{array}{rlcl}
+\mathbf{fun} & \mathit{concat}~\hslist{}~\mathit{ys} & = & \mathit{ys} \\
+        \mid & \mathit{concat}~(x :: \mathit{xs})~\mathit{ys} & = & x :: (\mathit{concat}~\mathit{xs}~\mathit{ys})
+\end{array}
+\end{displaymath}
+\begin{parts}
+\part[1] What is the time complexity of $\mathit{concat}$? \droppoints 
+\part A property of concatenation is that it is associative. In other words, the following equation should hold for three lists $xs$, $ys$, and $zs$ of the same type:
+\begin{align}
+\forall \mathit{xs} : \alpha~\mathit{list}, \forall \mathit{ys} : \alpha~\mathit{list}, \forall \mathit{zs} : \alpha~\mathit{list}, \mathit{concat}~\mathit{xs}~(\mathit{concat}~\mathit{ys}~\mathit{zs}) = \mathit{concat}~(\mathit{concat}~\mathit{xs}~\mathit{ys})~\mathit{zs}
+\end{align}
+\begin{subparts}
+\subpart[1] Prove that $\mathit{concat}~\hslist{}~(\mathit{concat}~\mathit{ys}~\mathit{zs}) = \mathit{concat}~(\mathit{concat}~\hslist{}~\mathit{ys})~\mathit{zs}$. \droppoints 
+\subpart[3] Assuming that $\mathit{concat}~\mathit{xs}~(\mathit{concat}~\mathit{ys}~\mathit{zs}) = \mathit{concat}~(\mathit{concat}~\mathit{xs}~\mathit{ys})~\mathit{zs}$ holds, prove that $\mathit{concat}~(x :: \mathit{xs})~(\mathit{concat}~\mathit{ys}~\mathit{zs}) = \mathit{concat}~(\mathit{concat}~(x :: \mathit{xs})~\mathit{ys})~\mathit{zs}$. \droppoints
+\end{subparts}
+\part[2] Below is a data type for Hutton's razor in DNH:
+\begin{displaymath}
+\begin{array}{lcl}
+\mathbf{datatype}~\mathit{expr} & = & \mathit{VAL}~\mathbf{of}~\mathit{int} \mid \mathit{PLUS}~\mathbf{of}~\mathit{expr} \times \mathit{expr}
+\end{array}
+\end{displaymath}
+Remember that we view expressions as trees. We now wish to calculate the size of an expression. A $\mathit{VAL}$ expression has size 1. A $\mathit{PLUS}$ expression's size is the size of the left sub-expression plus the size of the right sub-expression plus 1. Complete the following, recursive definition:  
+\begin{displaymath}
+\begin{array}{rlcl}
+\mathbf{fun} & \mathit{size}~(\mathit{VAL}(v)) & = & ??? \\
+        \mid & \mathit{size}~(\mathit{PLUS}(l,r)) & = & ???
+\end{array}
+\end{displaymath} \droppoints
+\part[1] What is an invariant of $\mathit{size}~e$ for all expressions $e$? \emph{I.e.} what is a property of the result of $\mathit{size}~e$? \droppoints 
+\part[5] Below is the compilation function for Hutton's razor in DNH:
+\begin{displaymath}
+\begin{array}{l}
+\begin{array}{lcl}
+\mathbf{datatype}~\mathit{instr} & = & \mathit{PUSH}~\mathbf{of}~\mathit{int} \mid \mathit{ADD}
+\end{array} \\\\
+\begin{array}{rlcl}
+\mathbf{fun} & \mathit{comp}~(\mathit{VAL}(v)) & = & \mathit{PUSH}~v \\
+ \mid & \mathit{comp}~(\mathit{PLUS}(l,r)) & = & \mathit{concat}~(\mathit{concat}~(\mathit{comp}~r)~(comp~l))~\hslist{\mathit{ADD}}
+\end{array}
+\end{array}
+\end{displaymath}
+What is the worst-case time complexity of $\mathit{comp}~e$ in terms of $\mathcal{O}(g(n))$ for some function $g(n)$ where $e$ is of type $\mathit{expr}$ and $n = \mathit{size}~e$? Explain how you have derived your answer. \droppoints 
+\part (CSTs only) $comp$ is currently very inefficient. Luckily, since we are working in a purely functional language, we can calculate a faster function. The trick is to begin with a more general version of $comp$ which we will call $comp'$. We do not know what the definition of $comp'$ is going to look like, but we want the following equation to hold:
+\begin{align}
+\forall e : \mathit{expr}, \forall \mathit{xs} : \mathit{instr~list}, \qquad \mathit{comp'}~\mathit{e}~\mathit{xs} = \mathit{concat}~(\mathit{comp}~\mathit{e})~\mathit{xs}
+\label{eq:one}
+\end{align}
+If we can find a way to define $\mathit{comp}'$, then $\mathit{comp}$ can later be defined as:
+\begin{displaymath}
+\begin{array}{rlcl}
+\mathbf{fun} & \mathit{comp}~e & = & \mathit{comp}'~e~\hslist{}
+\end{array}
+\end{displaymath}
+So how do we define $\mathit{comp}'$? We could try to define the function by hand so that it satisfies \autoref{eq:one}, but a better way is to calculate the definition using induction. To demonstrate how this works, consider the following definition of $\mathit{reverse}$:
+\begin{displaymath}
+\begin{array}{rlcl}
+\mathbf{fun} & \mathit{reverse}~\hslist{} & = & \hslist{} \\
+ \mid & \mathit{reverse}~(x :: \mathit{xs}) & = & \mathit{concat}~(\mathit{reverse}~\mathit{xs})~\hslist{x}
+\end{array}
+\end{displaymath}
+This function runs in $\mathcal{O}(n^2)$ time which is clearly not great for such a simple task. To improve it, we will say that we want to define a $\mathit{reverse'}$ function so that the following equation holds:
+\begin{align}
+\forall \mathit{xs} : \alpha~\mathit{list},\forall \mathit{ys} : \alpha~\mathit{list}, \qquad \mathit{reverse}'~\mathit{xs}~\mathit{ys} = \mathit{concat}~(\mathit{reverse}~\mathit{xs})~\mathit{ys}
+\label{eq:two}
+\end{align}
+To construct the definition of $\mathit{reverse}'$, we simultaneously assume that \autoref{eq:two} holds and perform induction on $\mathit{xs}$ to verify that. Our goal is to simplify the expression as much as possible. The base case of the induction will result in the base case of the definition of $\mathit{reverse}'$ and the recursive case of the induction will yield the recursive case of the definition of $\mathit{reverse}'$. The base case for induction on lists is the empty list:
+\begin{align*}
+\expr{\mathit{reverse}'~\hslist{}~\mathit{ys}}
+\hint{\autoref{eq:two}}
+\expr{\mathit{concat}~(\mathit{reverse}~\hslist{})~\mathit{ys}}
+\hint{applying $\mathit{reverse}$}
+\expr{\mathit{concat}~\hslist{}~\mathit{ys}}
+\hint{applying $\mathit{concat}$}
+\lastexpr{\mathit{ys}}
+\end{align*}
+We cannot evaluate $\mathit{ys}$ any further, so that we will use it as the base case for $\mathit{reverse}'$:
+\begin{displaymath}
+\begin{array}{rlcl}
+\mathbf{fun} & \mathit{reverse}'~\hslist{}~\mathit{ys} & = & \mathit{ys} \\
+    \mid & \mathit{reverse}'~(x :: \mathit{xs})~\mathit{ys} & = & ???
+\end{array}
+\end{displaymath}
+Next we assume that $\forall ys : \alpha~\mathit{list}, \mathit{reverse}'~\mathit{xs}~\mathit{ys} = \mathit{concat}~(\mathit{reverse}~\mathit{xs})~\mathit{ys}$ holds (the induction hypothesis) in addition to \autoref{eq:two} to prove the inductive case:
+
+\begin{align*}
+\expr{\mathit{reverse}'~(x :: xs)~ys}
+\hint{\autoref{eq:two}}
+\expr{\mathit{concat}~(\mathit{reverse}~(x :: xs))~ys}
+\hint{applying $\mathit{reverse}$}
+\expr{\mathit{concat}~(\mathit{concat}~(\mathit{reverse}~xs)~\hslist{x})~ys}
+\hint{associativity of $\mathit{concat}$}
+\expr{\mathit{concat}~(\mathit{reverse}~xs)~(\mathit{concat}~\hslist{x}~ys)}
+\hint{induction hypothesis}
+\expr{\mathit{reverse}'~xs~(\mathit{concat}~\hslist{x}~ys)}
+\hint{applying $\mathit{concat}$}
+\lastexpr{\mathit{reverse}'~xs~(x :: ys)}
+\end{align*}
+We can now complete the definition of $\mathit{reverse}'$:
+\begin{displaymath}
+\begin{array}{rlcl}
+\mathbf{fun} & \mathit{reverse}'~\hslist{}~\mathit{ys} & = & \mathit{ys} \\
+    \mid & \mathit{reverse}'~(x :: \mathit{xs})~\mathit{ys} & = & \mathit{reverse}'~xs~(x :: ys)
+\end{array}
+\end{displaymath}
+This, in turn, allows us to give a new definition for $\mathit{reverse}$:
+\begin{displaymath}
+\begin{array}{rlcl}
+\mathbf{fun} & \mathit{reverse}~xs & = & \mathit{reverse}'~xs~\hslist{}
+\end{array}
+\end{displaymath}
+\begin{subparts}
+\subpart[1] What is the worst-case time complexity of the new $\mathit{reverse}$ function? \droppoints 
+\subpart[2] Calculate the base case of $\mathit{comp}'$ by evaluating $\mathit{comp}'~\mathit{VAL}(v)~xs$ under the assumption that \autoref{eq:one} holds. \droppoints
+\subpart[5] Calculate the recursive case of $\mathit{comp}'$ by evaluating $\mathit{comp}'~\mathit{PLUS}(l,r)~xs$ under the assumption that \autoref{eq:one} and the induction hypothesis $\forall \mathit{xs} : \mathit{instr~list}, \mathit{comp'}~\mathit{e}~\mathit{xs} = \mathit{concat}~(\mathit{comp}~\mathit{e})~\mathit{xs}$ hold. \droppoints 
+\subpart[2] What is the worst-case time complexity of $\mathit{comp}'~e~\hslist{}$ in terms of $\mathcal{O}(g(n))$ for some function $g(n)$ where $e$ is of type $\mathit{expr}$ and $n = \mathit{size}~e$? Explain how you have derived your answer. \droppoints 
+\end{subparts}
+\end{parts}
+\question[2] Download the model solutions for OOP ex1\footnote{\url{http://www.cl.cam.ac.uk/~mbg28/oop-ex1.zip}} and implement a $\mathit{reverse}$ method in the $\mathit{LinkedList}$ class. \droppoints
+\question[2] (CSTs only) Compare the time complexity of that method with the original and revised definitions of $\mathit{reverse}$ in DNH. \droppoints
+
+
+\end{questions}
+\end{document}

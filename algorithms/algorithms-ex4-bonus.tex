@@ -1,0 +1,88 @@
+\documentclass[10pt,a4paper,fleqn]{exam}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{fancyeq}
+\usepackage{tikz}
+%\usepackage{tikz-uml}
+\usepackage{mathpartir}
+
+\usepackage[sc]{mathpazo}
+\linespread{1.05}         % Palatino needs more leading (space between lines)
+\usepackage[T1]{fontenc}
+
+% some format settings
+% for hard-bound final submission, use:
+%\setlength{\oddsidemargin}{4.6mm}     % 30 mm left margin - 1 in
+% for soft-bound version and techreport, use instead:
+\setlength{\oddsidemargin}{-0.4mm}    % 25 mm left margin - 1 in
+\setlength{\evensidemargin}{\oddsidemargin}
+\setlength{\topmargin}{-5.4mm}        % 20 mm top margin - 1 in
+\setlength{\textwidth}{160mm}         % 20/25 mm right margin
+\setlength{\textheight}{237mm}        % 20 mm bottom margin
+\setlength{\headheight}{5mm}
+\setlength{\headsep}{5mm}
+\setlength{\parindent}{0mm}
+\setlength{\parskip}{\medskipamount}
+\renewcommand\baselinestretch{1.2} % thesis format (not needed for techreport)
+% don't let large figures hijack entire pages
+\renewcommand\topfraction{.9}
+\renewcommand\textfraction{.1}
+\renewcommand\floatpagefraction{.8}
+
+\pagestyle{headandfoot}
+%\pointsinrightmargin
+%\pointname{ marks}
+%\marginpointname{ marks}
+
+\marksnotpoints 
+
+\hypersetup{  
+  urlcolor=black,
+  linkcolor=black,
+  colorlinks=true  
+}
+
+\titlelabel{\llap{\thetitle\quad}}
+
+\newcommand {\lbrac} {\makebox[0pt]{[\kern-1ex[}}
+\newcommand {\rbrac} {\makebox[0pt]{]\kern-1ex]}}
+\newcommand{\denote}[1]{\lbrac~#1~\rbrac}
+
+\begin{document}
+
+\begin{center}
+\Large Algorithms \\
+\LARGE \textbf{Exercise 4 (Bonus): Data structures II} \\
+\end{center}
+
+\hrule
+
+\vspace{0.5cm}
+
+\marksnotpoints
+\pointsdroppedatright
+\marksnotpoints
+\marginpointname{ \points}
+
+%Some ideas: file systems, scene graphs? operating system stuff (mixing the tress and queues, heaps, etc.?)
+
+%\section{Quadtrees}
+
+%\question A \emph{quadtree} 
+
+%Data structures are often explained in an imperative setting. In this exercise, we will look at binomial heaps and red-black trees in a purely functional setting\footnote{This exercise sheet is largely based on \emph{Purely Functional Data Structures} by Chris Okasaki.}. For this exercise, we will use a pure subset of ML\footnote{You may use other languages, as long as you impose the same restrictions there.}. In other words, we are not allowed to use references/mutable values.
+
+\begin{questions}
+
+\section{Thanks, James!}
+
+\question Is it true or false that $\displaystyle 2^r = \sum_{n=0}^{r} \binom{n}{r}$? Give a proof by induction if it is true or a counterexample if not.
+\question Suppose 
+
+\end{questions}
+\end{document}

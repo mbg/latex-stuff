@@ -1,0 +1,161 @@
+\documentclass[10pt,a4paper,fleqn]{exam}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{fancyeq}
+
+\usepackage[sc]{mathpazo}
+\linespread{1.05}         % Palatino needs more leading (space between lines)
+\usepackage[T1]{fontenc}
+
+% some format settings
+% for hard-bound final submission, use:
+%\setlength{\oddsidemargin}{4.6mm}     % 30 mm left margin - 1 in
+% for soft-bound version and techreport, use instead:
+\setlength{\oddsidemargin}{-0.4mm}    % 25 mm left margin - 1 in
+\setlength{\evensidemargin}{\oddsidemargin}
+\setlength{\topmargin}{-5.4mm}        % 20 mm top margin - 1 in
+\setlength{\textwidth}{160mm}         % 20/25 mm right margin
+\setlength{\textheight}{237mm}        % 20 mm bottom margin
+\setlength{\headheight}{5mm}
+\setlength{\headsep}{5mm}
+\setlength{\parindent}{0mm}
+\setlength{\parskip}{\medskipamount}
+\renewcommand\baselinestretch{1.2} % thesis format (not needed for techreport)
+% don't let large figures hijack entire pages
+\renewcommand\topfraction{.9}
+\renewcommand\textfraction{.1}
+\renewcommand\floatpagefraction{.8}
+
+\pagestyle{headandfoot}
+%\pointsinrightmargin
+%\pointname{ marks}
+%\marginpointname{ marks}
+
+\marksnotpoints 
+
+\hypersetup{  
+  urlcolor=black,
+  linkcolor=black,
+  colorlinks=true  
+}
+
+\titlelabel{\llap{\thetitle\quad}}
+
+\newcommand {\lbrac} {\makebox[0pt]{[\kern-1ex[}}
+\newcommand {\rbrac} {\makebox[0pt]{]\kern-1ex]}}
+\newcommand{\denote}[1]{\lbrac~#1~\rbrac}
+
+\begin{document}
+
+\begin{center}
+\Large Exercise sheet 3 \\
+\LARGE Object-oriented programming 
+\end{center}
+
+\hrule
+
+\vspace{0.5cm}
+
+In this exercise we will solve a few algorithmic problems in Java.
+
+\begin{questions}
+
+\section{Problems}
+
+\question It is well known that there exists a solution for every problem, unless your problem is PHP. Define an interface called $\mathit{Problem}$ which declares an $\mathbf{int}~\mathit{solve}()$ method.
+\question What is a ``marker interface''? Is $\mathit{Problem}$ one? If not, give an example of an interface which is.
+\question What is the difference between interfaces and abstract classes?
+\question What is the default visibility of methods in an interface? Can you change it?
+\question Explain the advantages and/or disadvantages of interfaces when compared with multiple inheritance.
+
+\section{Bridge-crossing problem}
+
+\question A bridge-crossing problem of complexity $n$ where $n \mod 2 = 0$ is defined as follows: there are $n$-many people on one side of a river. There is a bridge which connects them to the other side. All of the people wish to cross to the other side, but the bridge can only support the weight of at most two people at once. To make matters worse, it is night and they only have one torch amongst them. It would be too dangerous to cross the bridge without a torch. Many of the people are exhausted and it would take each of them a different amount of time to cross the bridge. If two people cross the bridge together, the time it takes them to cross will be determined by the slowest of the two.
+
+Suppose that the set of people is $\{~p_4,p_8,p_{15},p_{16},p_{23},p_{42}~\}$ where we use \emph{e.g.} $p_{15}$ to denote a person who takes 15 minutes to cross the bridge. The initial state of the problem could therefore be represented as:
+\begin{displaymath}
+\begin{array}{llcll}
+\qquad & \bullet~\{~p_4,p_8,p_{15},p_{16},p_{23},p_{42}~\} & \qquad & \{~~\} & \qquad 0~\mathit{minutes} \\
+\end{array}
+\end{displaymath}
+We use $\bullet$ to show which side of the river the torch is on. For example, if $p_4$ and $p_{15}$ were to cross at the same time, we could denote this move as:
+\begin{displaymath}
+ \longrightarrow \{~p_4,p_{15}~\}
+\end{displaymath}
+It would take this pair $max(4,15) = 15$ minutes to cross. The resulting state would be:
+\begin{displaymath}
+\begin{array}{llcll}
+\qquad & \{~p_8,p_{16},p_{23},p_{42}~\} & \qquad & \{~p_4,p_{15}~\}~\bullet & \qquad 15~\mathit{minutes} \\
+\end{array}
+\end{displaymath}
+The torch is now on the right side and it has taken us a total of 15 minutes to get to this state. In order to allow the remaining people to cross, the torch needs to be taken back to the left side:
+\begin{displaymath}
+ \longleftarrow \{~p_4~\}
+\end{displaymath}
+We choose $p_4$ to do this, because $p_{15}$ would take longer. This results in the following state:
+\begin{displaymath}
+\begin{array}{llcll}
+\qquad & \bullet~\{~p_4,p_8,p_{16},p_{23},p_{42}~\} & \qquad & \{~p_{15}~\} & \qquad 19~\mathit{minutes} \\
+\end{array}
+\end{displaymath}
+We continue moving people across until everyone is on the right side of the river.
+\begin{parts}
+\part We need to be able to represent individual people in Java. Create a new class called $\mathit{Person}$ which contains a field of type $\mathit{int}$. We will use this field to store how long it would take the person to cross the bridge. This value should be set using a constructor when an object of type $\mathit{Person}$ is initialised and it should be impossible to alter the value afterwards. For example, we may want to write:
+\begin{displaymath}
+\begin{array}{lcl}
+\mathit{Person}~\mathit{p4} & = & \mathbf{new}~\mathit{Person}(4); \\
+\mathit{Person}~\mathit{p15} & = & \mathbf{new}~\mathit{Person}(15);
+\end{array}
+\end{displaymath}
+\part Extend the $\mathit{Person}$ class with the $\mathit{Comparable}$ interface so that objects of type $\mathit{Person}$ may be compared in terms of the time it takes them to cross the bridge. \emph{E.g.} the following expressions should be true:
+\begin{displaymath}
+\begin{array}{l}
+\mathit{p4}.\mathit{compareTo}(\mathit{p15}) < 0 \\
+\mathit{p4}.\mathit{compareTo}(\mathit{p4}) == 0 \\
+\mathit{p15}.\mathit{compareTo}(\mathit{p4}) > 0
+\end{array}
+\end{displaymath}
+\part What is the difference between value and reference equality? Use your $\mathit{Person}$ class as an example.
+\part Define a new class, $\mathit{Side}$, which can be used to represent a side of the river. $\mathit{Side}$ should maintain a set of people who are currently on that side of the river. Additionally, there should be a boolean value to tell us whether the torch is currently on this side of the river. You are encouraged to use an appropriate type of collection from the Java library.
+\part Define a new class, $\mathit{BridgeCrossingProblem}$, which has one field for each side of the river. The class should have one constructor which accepts a set of people as argument. This set should, together with the torch, be placed on one side of the river. 
+\part We want to be able to get all people from one side of the river to the other in as little time as possible. Think of an algorithm which minimises the time needed to get all people across the bridge. Remember that at most two people may cross at once and that there is only one torch which they must take with them to the other side. In a similar style as shown in the introduction to this question, show how your algorithm works for the set $\{~p_4,p_8,p_{15},p_{16},p_{23},p_{42}~\}$. There is no code required for this question and you should only show each step your algorithm takes, along with a short description of how it works.  
+\part Implement your $\mathit{Problem}$ interface in the $\mathit{BridgeCrossingProblem}$ class. The $\mathbf{int}~solve()$ method should implement your algorithm to calculate the shortest time needed to get all people in an instance of $\mathit{BridgeCrossingProblem}$ across the river. You should extend your $\mathit{Side}$ class as needed and the algorithm should explicitly move people from one instance of $\mathit{Side}$ to the other, updating the torch values accordingly. After each step, the current state of the problem should be written to the standard output (\emph{i.e.} using $\mathit{System}.\mathit{out}.\mathit{println}$ or related methods).
+\end{parts}
+
+\question Trying to think of new sets of people to test your algorithm with is a rather repetitive task and you would like to automate this process.
+\begin{parts}
+\part Define a new class, $\mathit{RandomBridgeCrossingProblem}$, which extends $\mathit{BridgeCrossingProblem}$. This class should have a single constructor which takes a value $n$ of type $\mathbf{int}$ as argument and constructs an initial set with $n$-many people. The time it takes each person to cross the bridge should be determined randomly. \emph{Hint}: the $\mathit{Random}$ class and its $\mathit{nextInt}$ method can be used to generate random numbers. You will have to import \texttt{java.util.Random}.
+\part Define a new class, $\mathit{CompletelyRandomBridgeCrossingProblem}$, which extends the class from part (a). This class should have a single constructor which takes no arguments. The size of the initial population should be determined randomly.
+\part Describe what is meant by \emph{constructor chaining}.
+\part Why are there no destructors in Java?
+\end{parts}
+
+\section{Towers of Hanoi}
+
+\question The classical Towers of Hanoi problem consists of three stacks. Initially, $n$-many disks are placed on the first stack and the other two stacks are empty. Disks come in different sizes and larger disks may not be placed on top of smaller ones. 
+\begin{parts}
+\part Define a new class called $\mathit{Disk}$. A disk will need to have a size and should implement $\mathit{Comparable}$.
+\part Define a new class called $\mathit{Tower}$. A tower is a stack of disks. 
+\part Define a new class called $\mathit{TowersOfHanoi}$ which should implement $\mathit{Problem}$. It should contain three towers. The constructor should have a single parameter for the number of disks on the first stack. $\mathit{solve}$ should return the number of moves required to move all disks from the first to the third stack. While it is possible to calculate the number of moves using $2^n - 1$, you should perform all moves explicitly and print the state of the problem to the standard output at the end of each move.
+\end{parts}
+\question (\emph{Bonus}) In an unfortunate twist of fate, Hanoi is rapidly losing money and can no longer maintain the towers. However, eager to make profit from the lucrative free-to-play market, they sell the towers to an American game developer. The company decides that individual disks in the towers should be turned into either shops or flats.
+\begin{parts}
+\part Define a new class called $\mathit{Flat}$ which extends $\mathit{Disk}$. A flat can house up to five citizens, but is initially empty.
+\part Define a new class called $\mathit{Shop}$ which extends $\mathit{Disk}$. Each shop has up to three employees. The number of products stocked by the shop depends on the number of employees it has. For example, a shop with two employees will stock two products. 
+\part Define a new class called $\mathit{Citizen}$. A citizen lives in a $\mathit{Flat}$ and may be employed in a $\mathit{Shop}$.
+\part Define a new class called $\mathit{TinyTowersOfHanoi}$ which extends $\mathit{TowersOfHanoi}$. You should override the $\mathit{solve}$ method so that the algorithm works as before, but at each step one of the following things should happen:
+\begin{enumerate}
+\item If we are moving a disk, then it should be turned into either a $\mathit{Flat}$ or a $\mathit{Shop}$. You may choose how you determine whether a flat or a shop should be created.
+\item If we are moving a flat, then one citizen should move in unless there are already five citizens in the flat. All citizens lose their existing jobs when a flat is moved, but once the move has been completed, they should be allocated new jobs in shops which are on the same tower as the flat.
+\item If we are moving a shop, then all employees of the shop lose their job.
+\end{enumerate}
+After each turn, you should calculate the number of products which are being sold in each tower. When the algorithm finishes, you should print the sum of the number of products which were sold after each step. You may try and see if you can maximise the total amount of products.
+\end{parts}
+
+\end{questions}
+\end{document}

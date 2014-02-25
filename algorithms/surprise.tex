@@ -1,0 +1,101 @@
+\documentclass[10pt,a4paper,fleqn]{exam}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{fancyeq}
+\usepackage{tikz}
+%\usepackage{tikz-uml}
+\usepackage{mathpartir}
+
+\usepackage[sc]{mathpazo}
+\linespread{1.05}         % Palatino needs more leading (space between lines)
+\usepackage[T1]{fontenc}
+
+% some format settings
+% for hard-bound final submission, use:
+%\setlength{\oddsidemargin}{4.6mm}     % 30 mm left margin - 1 in
+% for soft-bound version and techreport, use instead:
+\setlength{\oddsidemargin}{-0.4mm}    % 25 mm left margin - 1 in
+\setlength{\evensidemargin}{\oddsidemargin}
+\setlength{\topmargin}{-5.4mm}        % 20 mm top margin - 1 in
+\setlength{\textwidth}{160mm}         % 20/25 mm right margin
+\setlength{\textheight}{237mm}        % 20 mm bottom margin
+\setlength{\headheight}{5mm}
+\setlength{\headsep}{5mm}
+\setlength{\parindent}{0mm}
+\setlength{\parskip}{\medskipamount}
+\renewcommand\baselinestretch{1.2} % thesis format (not needed for techreport)
+% don't let large figures hijack entire pages
+\renewcommand\topfraction{.9}
+\renewcommand\textfraction{.1}
+\renewcommand\floatpagefraction{.8}
+
+\pagestyle{headandfoot}
+%\pointsinrightmargin
+%\pointname{ marks}
+%\marginpointname{ marks}
+
+\marksnotpoints 
+
+\hypersetup{  
+  urlcolor=black,
+  linkcolor=black,
+  colorlinks=true  
+}
+
+\titlelabel{\llap{\thetitle\quad}}
+
+\newcommand {\lbrac} {\makebox[0pt]{[\kern-1ex[}}
+\newcommand {\rbrac} {\makebox[0pt]{]\kern-1ex]}}
+\newcommand{\denote}[1]{\lbrac~#1~\rbrac}
+
+\begin{document}
+
+\begin{center}
+\Large Algorithms \\
+\LARGE \textbf{Exercise 6: Data structures IV \& Graph algorithms I} \\
+\end{center}
+
+\hrule
+
+\vspace{0.5cm}
+
+\marksnotpoints
+\pointsdroppedatright
+\marksnotpoints
+\marginpointname{ \points}
+
+%Some ideas: file systems, scene graphs? operating system stuff (mixing the tress and queues, heaps, etc.?)
+
+%\section{Quadtrees}
+
+%\question A \emph{quadtree} 
+
+\begin{center}
+\emph{Answer SECTION ONE or SECTION ONE.}
+\end{center}
+
+\begin{questions}
+
+\section{Conway's Game of Life}
+
+\question John Conway was an undergraduate at Cambridge and read Mathematics. He stayed on at Cambridge to study for a Ph.D. and afterwards as a Lecturer. Conway invented the Game of Life in 1970. The game board, or world, for the Game of Life is a two-dimensional grid of square cells. Each cell in the world is in one of two states, dead or alive. The world transitions through a set of discrete generations, starting from the initial state of the cells at time zero, which is determined by the human player. The rules of the game describe how to transition from generation $t$ to generation $t+1$, and are as follows:
+\begin{itemize}
+\item a live cell with fewer than two neighbours dies (caused by underpopulation);
+\item a live cell with two or three neighbours lives (representing a balanced population);
+\item a live cell with with more than three neighbours dies (caused by overcrowding and starvation); and
+\item a dead cell with exactly three live neighbours comes alive (colonisation).
+\end{itemize}
+The game calls for these rules to be applied simultaneously to all cells in order to produce the next generation i.e. a cell which dies due to underpopulation could also play a role in colonisation of another cell. We will implement this by applying the rules to each cell in turn and writing the results into a new, blank, world rather than updating the current one.
+\begin{parts}
+\part[108] A \emph{quadtree} is a tree in which each node is either a leaf or has exactly four children. Quadtrees can be used to efficiently represent two-dimensional spaces (such as worlds in Conway's Game of Life). Implement Conway's Game of Life using quadtrees. \droppoints 
+\part[9001] An \emph{octree} is a tree in which each node is either a leaf or has exactly eight children. Octrees can be used to efficiently represent three-dimensional spaces (such as a 3D version of Conway's Game of Life). Implement Conway's Game of Life using octrees with suitable rules for the 3D world. \droppoints 
+\part[0] Complete the questions in \url{http://www.cl.cam.ac.uk/~mbg28/algorithms-ex6.pdf} \droppoints 
+\end{parts}
+
+\end{questions}
+\end{document}

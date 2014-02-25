@@ -1,0 +1,114 @@
+\documentclass[10pt,a4paper,fleqn]{exam}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{fancyeq}
+\usepackage{tikz}
+%\usepackage{tikz-uml}
+\usepackage{mathpartir}
+
+\usepackage[sc]{mathpazo}
+\linespread{1.05}         % Palatino needs more leading (space between lines)
+\usepackage[T1]{fontenc}
+
+% some format settings
+% for hard-bound final submission, use:
+%\setlength{\oddsidemargin}{4.6mm}     % 30 mm left margin - 1 in
+% for soft-bound version and techreport, use instead:
+\setlength{\oddsidemargin}{-0.4mm}    % 25 mm left margin - 1 in
+\setlength{\evensidemargin}{\oddsidemargin}
+\setlength{\topmargin}{-5.4mm}        % 20 mm top margin - 1 in
+\setlength{\textwidth}{160mm}         % 20/25 mm right margin
+\setlength{\textheight}{237mm}        % 20 mm bottom margin
+\setlength{\headheight}{5mm}
+\setlength{\headsep}{5mm}
+\setlength{\parindent}{0mm}
+\setlength{\parskip}{\medskipamount}
+\renewcommand\baselinestretch{1.2} % thesis format (not needed for techreport)
+% don't let large figures hijack entire pages
+\renewcommand\topfraction{.9}
+\renewcommand\textfraction{.1}
+\renewcommand\floatpagefraction{.8}
+
+\pagestyle{headandfoot}
+%\pointsinrightmargin
+%\pointname{ marks}
+%\marginpointname{ marks}
+
+\marksnotpoints 
+
+\hypersetup{  
+  urlcolor=black,
+  linkcolor=black,
+  colorlinks=true  
+}
+
+\titlelabel{\llap{\thetitle\quad}}
+
+\newcommand {\lbrac} {\makebox[0pt]{[\kern-1ex[}}
+\newcommand {\rbrac} {\makebox[0pt]{]\kern-1ex]}}
+\newcommand{\denote}[1]{\lbrac~#1~\rbrac}
+
+\begin{document}
+
+\begin{center}
+\Large Algorithms \\
+\LARGE \textbf{Exercise 5: Data structures III} \\
+\end{center}
+
+\hrule
+
+\vspace{0.5cm}
+
+\marksnotpoints
+\pointsdroppedatright
+\marksnotpoints
+\marginpointname{ \points}
+
+\begin{questions}
+
+\section{Past Tripos questions}
+
+\question[3] Explain the terms \emph{amortised analysis} and \emph{aggregate analysis}, highlighting the difference between them. \droppoints 
+\question Assume that the following two classes, which implement the standard stack (last-in first-out) and queue (first-in first-out) data structures, are available.
+\begin{displaymath}
+\begin{array}{cc}
+\begin{array}{l}
+\mathbf{class}~\mathit{Stack} \\
+\quad \mathbf{void}~\mathit{push}(\mathit{Item}~\mathit{x}) \\
+\quad \mathit{Item}~\mathit{pop}() \\
+\quad \mathit{Boolean}~\mathit{isEmpty}()
+\end{array} &
+\begin{array}{l}
+\mathbf{class}~\mathit{Queue} \\
+\quad \mathbf{void}~\mathit{enqueue}(\mathit{Item}~\mathit{x}) \\
+\quad \mathit{Item}~\mathit{dequeue}() \\
+\quad \mathit{Boolean}~\mathit{isEmpty}()
+\end{array}
+\end{array}
+\end{displaymath}
+\begin{parts}
+\part[5] A $\mathit{Multistack}$ class is derived from $\mathit{Stack}$ with the addition of two methods:
+\begin{itemize}
+\item a $\mathbf{void}~\mathit{multipush}(\mathit{Itemlist}~l)$ that takes a list $l$ of items and pushes each of the items onto the stack (each action of extracting an item from the list and pushing it onto the stack has constant cost), and
+\item a $\mathbf{void}~\mathit{multipop}(\mathbf{int}~m)$ that takes an integer $m$ and pops that many items off the stack (raising an exception if there were fewer, but don't worry about that)
+\end{itemize}
+Is it true or false that, given an arbitrary sequence of $n~\mathit{Multistack}$ operations starting from an empty $\mathit{Multistack}$, each operation in the sequence has amortised constant cost? Justify your answer in detail. \droppoints 
+\part[7] Provide an implementation of class $\mathit{Queue}$ using no other data structures than $\mathit{Item}$, $\mathit{Boolean}$, and $\mathit{Stack}$. The amortised running time of each $\mathit{Queue}$ method must be constant. (\emph{Note that you may only use the $\mathit{Stack}$ as a black box: you are not allowed to access its internal implementation.}) \droppoints 
+\part[5] Using the potential method, prove that the amortised running time of all your $\mathit{Queue}$ methods from the previous part is indeed constant. \droppoints 
+\end{parts}
+
+\section{Past supervision questions}
+
+\question[10] Previously\footnote{\url{http://www.cl.cam.ac.uk/~mbg28/algorithms-ex3.pdf}} we implemented binary trees using arrays, which required us to increase the size of the arrays whenever we ran out of space. You were asked the following:
+\begin{quote}
+Currently, this implementation can only contain up to $n$-many nodes (including the root). Suggest one way to remove this limit. The tree should still be represented using an array. Discuss what impact your (suggested) changes have on the time complexity of $\mathit{insert}$.
+\end{quote}
+Using your newly acquired knowledge of amortised analysis, explain how you would answer these questions now. You should discuss how you would determine the size of new arrays, and what the time complexity of $\mathit{insert}$ is (using appropriate notation). Justify your answers in detail. \droppoints 
+
+\end{questions}
+\end{document}

@@ -1,0 +1,220 @@
+\documentclass[10pt,a4paper,fleqn]{exam}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{fancyeq}
+\usepackage{tikz}
+%\usepackage{tikz-uml}
+\usepackage{mathpartir}
+
+\usepackage[sc]{mathpazo}
+\linespread{1.05}         % Palatino needs more leading (space between lines)
+\usepackage[T1]{fontenc}
+
+% some format settings
+% for hard-bound final submission, use:
+%\setlength{\oddsidemargin}{4.6mm}     % 30 mm left margin - 1 in
+% for soft-bound version and techreport, use instead:
+\setlength{\oddsidemargin}{-0.4mm}    % 25 mm left margin - 1 in
+\setlength{\evensidemargin}{\oddsidemargin}
+\setlength{\topmargin}{-5.4mm}        % 20 mm top margin - 1 in
+\setlength{\textwidth}{160mm}         % 20/25 mm right margin
+\setlength{\textheight}{237mm}        % 20 mm bottom margin
+\setlength{\headheight}{5mm}
+\setlength{\headsep}{5mm}
+\setlength{\parindent}{0mm}
+\setlength{\parskip}{\medskipamount}
+\renewcommand\baselinestretch{1.2} % thesis format (not needed for techreport)
+% don't let large figures hijack entire pages
+\renewcommand\topfraction{.9}
+\renewcommand\textfraction{.1}
+\renewcommand\floatpagefraction{.8}
+
+\pagestyle{headandfoot}
+%\pointsinrightmargin
+%\pointname{ marks}
+%\marginpointname{ marks}
+
+\marksnotpoints 
+
+\hypersetup{  
+  urlcolor=black,
+  linkcolor=black,
+  colorlinks=true  
+}
+
+\titlelabel{\llap{\thetitle\quad}}
+
+\newcommand {\lbrac} {\makebox[0pt]{[\kern-1ex[}}
+\newcommand {\rbrac} {\makebox[0pt]{]\kern-1ex]}}
+\newcommand{\denote}[1]{\lbrac~#1~\rbrac}
+
+\begin{document}
+
+\begin{center}
+\Large Algorithms \\
+\LARGE \textbf{Exercise 2: Strategies for algorithm design} \\
+\end{center}
+
+\hrule
+
+\vspace{0.5cm}
+
+
+\begin{questions}
+\section{Hutton's Razor strikes back}
+\question \emph{Type inference} describes the process of assigning types to previously untyped terms of a formal language. A type may be seen as an approximation of the value of a term. We use types to try and catch errors in a program before it is run. For example, recall the definition of Hutton's razor:
+\begin{displaymath}
+e = e + e \mid n \in \mathbb{N}
+\end{displaymath}
+We extend this language with boolean values and conditionals:
+\begin{displaymath}
+e = e + e \mid n \in \mathbb{N} \mid b \in \mathbb{B} \mid \mathbf{if}~e~\mathbf{then}~e~\mathbf{else}~e
+\end{displaymath}
+Now let us define the evaluation function for this language:
+\begin{displaymath}
+\begin{array}{lcl}
+\denote{\cdot} & : & e \to (\mathbb{N} + \mathbb{B})_{\bot}\\
+\denote{n}         & = & \mathbf{inl}~n \\
+\denote{b}         & = & \mathbf{inr}~b \\
+\denote{e_0 + e_1} & = & \left\{ \begin{array}{ll}
+\mathbf{inl}~(x + y) & \text{if } ~\denote{e_0}~ = \mathbf{inl}~x \text{ and } ~\denote{e_1}~ = \mathbf{inl}~y \\
+\bot & \text{otherwise}
+\end{array}  \right.\\
+\denote{\mathbf{if}~e_0~\mathbf{then}~e_1~\mathbf{else}~e_2} & = & \left\{\begin{array}{ll}
+\denote{e_1} & \qquad \quad \; \text{if } ~\denote{e_0}~ = \mathbf{inr}~\mathit{true}\\
+\denote{e_2} & \qquad \quad \; \text{if } ~\denote{e_0}~ = \mathbf{inr}~\mathit{false}\\
+\bot         & \qquad \quad \; \text{otherwise}
+\end{array}\right.
+\end{array}
+\end{displaymath}
+Note that the codomain of $~\denote{\cdot}~$ is $(\mathbb{N} + \mathbb{B})_{\bot}$. $\mathbb{N} + \mathbb{B}$ represents a \emph{tagged union}. Given two sets, $A$ and $B$, the tagged union of the two is defined as:
+\begin{displaymath}
+A + B = \{~\mathbf{inl}~a \mid a \in A~\} \cup \{~\mathbf{inr}~b \mid b \in B~\}
+\end{displaymath}  
+In other words, a tagged union is simply a union where the elements are tagged with either $\mathbf{inl}$ or $\mathbf{inr}$ to indicate which set they originate from.
+
+The subscript $\bot$ indicates that the set is ``lifted''. This simply means that we include $\bot$ (read as \emph{bottom} or \emph{undefined}) in the set. In other words:
+\begin{displaymath}
+(\mathbb{N} + \mathbb{B})_{\bot} = \set{\bot, \mathbf{inl}~0,\mathbf{inl}~1, \ldots, \mathbf{inr}~\mathit{true}, \mathbf{inr}~\mathit{false}}
+\end{displaymath}
+To summarise, the co-domain of the evaluation function is the set of $\bot$, all natural numbers tagged with $\mathbf{inl}$, and all boolean values tagged with $\mathbf{inr}$. We use $\bot$ in the definition of the evaluation function to indicate failure: \emph{i.e.} things we cannot evaluate.
+
+However, according to the grammar for $e$, a perfectly valid expression in this language would be the following:
+\begin{displaymath}
+\mathbf{if}~4~\mathbf{then}~\mathit{false}~\mathbf{else}~8
+\end{displaymath}
+This expression does intuitively not make much sense. If we apply the evaluation function to it, it will evaluate to $\bot$. To avoid such cases, we will add a type system to our language. We first need to define suitable types. A good start would be one type for each kind of value in our language: 
+\begin{displaymath}
+\tau = \mathbf{nat} \mid \mathbf{bool}
+\end{displaymath}
+We know that a well-formed expression will either evaluate to a natural number or to a boolean value. Since types are approximations of the values of expressions, our definition of $\tau$ seems adequate.
+
+We now wish to define a binary relation $\vdash e : \tau$ which relates expressions $e$ to types $\tau$. For example, we want to say that all numbers in our language are of type $\mathbf{nat}$: $\vdash n : \mathbf{nat}$. Enumerating all of these relations would be impossible, however, so we declare rules according to which types are assigned different forms of expressions instead. We call this the \emph{deductive system}. Each rule in this system is presented in the following way:
+\begin{mathpar}
+\inferrule*[Right=RULE-NAME]
+{ \mathit{condition1} \\ \mathit{condition2} \\ \ldots}
+{ \mathit{conclusion}}
+\end{mathpar}
+These rules are like implications in logic: if all the conditions are true (shown above the bar), then we can draw the conclusion which is shown below the bar. The full deductive system for our language is now shown below:
+\begin{mathpar}
+\inferrule*[Right=T-VAL]
+{ }
+{
+ \vdash n : \mathbf{nat}
+} \and
+\inferrule*[Right=T-BOOL]
+{ }
+{
+ \vdash b : \mathbf{bool}
+} \\
+\inferrule*[Right=T-ADD]
+{
+	\vdash e_0 : \mathbf{nat} \\ \vdash e_1 : \mathbf{nat}
+}
+{
+	\vdash e_0 + e_1 : \mathbf{nat}
+} \and
+\inferrule*[Right=T-COND]
+{
+	\vdash e_0 : \mathbf{bool} \\ \vdash e_1 : \sigma \\ \vdash e_2 : \sigma
+}
+{
+	\vdash \mathbf{if}~e_0~\mathbf{then}~e_1~\mathbf{else}~e_2 : \sigma 
+}
+\end{mathpar} 
+To show how this works, let us prove that the type of $\mathbf{if}~\mathit{true}~\mathbf{then}~(23 + 42)~\mathbf{else}~4$ is $\mathbf{nat}$. If we think of the expression as a tree, we have a conditional expression at the top. This means that we need to use the \textsf{T-COND} rule first:
+\begin{mathpar}
+\inferrule*[Right=T-COND]
+{
+	\vdash \mathit{true} : \mathbf{bool} \\ \vdash (23 + 42) : \mathbf{nat} \\ \vdash 4 : \mathbf{nat}
+}
+{
+	\vdash \mathbf{if}~\mathit{true}~\mathbf{then}~(23 + 42)~\mathbf{else}~4 : \mathbf{nat}
+}
+\end{mathpar}
+Here we have replaced the meta variables $e_0$, $e_1$, and $e_2$ with the corresponding expressions. Next we need to show that all of the three conditions hold. We work our way from left to right. $\vdash \mathit{true} : \mathbf{bool}$ holds according to the \textsf{T-BOOL} rule:
+\begin{mathpar}
+\inferrule*[Right=T-COND]
+{
+	\inferrule*[Right=T-BOOL] { }{\vdash \mathit{true} : \mathbf{bool}} \qquad \\ \vdash (23 + 42) : \mathbf{nat} \\ \vdash 4 : \mathbf{nat}
+}
+{
+	\vdash \mathbf{if}~\mathit{true}~\mathbf{then}~(23 + 42)~\mathbf{else}~4 : \mathbf{nat}
+}
+\end{mathpar}
+We use \textsf{T-ADD} to show that $\vdash (23+42) : \mathbf{nat}$:
+\begin{mathpar}
+\inferrule*[Right=T-COND]
+{
+	\inferrule*[Right=T-BOOL] { }{\vdash \mathit{true} : \mathbf{bool}} \qquad \\
+	\inferrule*[Right=T-ADD] { \vdash 23 : \mathbf{nat} \\ \vdash 42 : \mathbf{nat} } { \vdash (23 + 42) : \mathbf{nat} } \qquad \\ 
+	\vdash 4 : \mathbf{nat}
+}
+{
+	\vdash \mathbf{if}~\mathit{true}~\mathbf{then}~(23 + 42)~\mathbf{else}~4 : \mathbf{nat}
+}
+\end{mathpar}
+\textsf{T-ADD} has two conditions, both of which we can prove using \textsf{T-VAL}:
+\begin{mathpar}
+\inferrule*[Right=T-COND]
+{
+	\inferrule*[Right=T-BOOL] { }{\vdash \mathit{true} : \mathbf{bool}} \qquad \\
+	\inferrule*[Right=T-ADD] { \inferrule*[Right=T-VAL] { } {\vdash 23 : \mathbf{nat}} \qquad \\ \inferrule*[Right=T-VAL] { } {\vdash 42 : \mathbf{nat}} } { \vdash (23 + 42) : \mathbf{nat} } \qquad \\ 
+	\vdash 4 : \mathbf{nat}
+}
+{
+	\vdash \mathbf{if}~\mathit{true}~\mathbf{then}~(23 + 42)~\mathbf{else}~4 : \mathbf{nat}
+}
+\end{mathpar}
+Lastly, we use \textsf{T-ADD} one more time to prove that $\vdash 4 : \mathbf{nat}$:
+\begin{mathpar}
+\inferrule*[Right=T-COND]
+{
+	\inferrule*[Right=T-BOOL] { }{\vdash \mathit{true} : \mathbf{bool}} \qquad \\
+	\inferrule*[Right=T-ADD] { \inferrule*[Right=T-VAL] { } {\vdash 23 : \mathbf{nat}} \qquad \\ \inferrule*[Right=T-VAL] { } {\vdash 42 : \mathbf{nat}} } { \vdash (23 + 42) : \mathbf{nat} } \qquad \\ 
+	\inferrule*[Right=T-VAL] { } {\vdash 4 : \mathbf{nat}}
+}
+{
+	\vdash \mathbf{if}~\mathit{true}~\mathbf{then}~(23 + 42)~\mathbf{else}~4 : \mathbf{nat}
+}
+\end{mathpar}
+
+The type inference problem can now be formalised as: given an arbitrary expression $e$, can we assign a type $\tau$ to it such that the typing relation holds:
+\begin{displaymath}
+\vdash e : \tau
+\end{displaymath}
+
+\begin{parts}
+\part In a language of your choice, implement suitable data structures to represent expressions and types in our language. You should also implement the evaluation function.
+\part Turn the deduction system described above into an algorithm and implement it in a language of your choice.
+\part What is the time complexity of your type inference algorithm?
+\part \emph{Type checking} is a similar problem to type inference. It asks: given an expression $e$ and a type $\tau$, is $\tau$ a suitable type for $e$? Show how type checking can be implemented by reducing it to type inference.
+\part Suppose that we want to lift the restriction on conditionals and allow each branch to return a potentially different type. Discuss how this could be implemented in the type system. Describe all changes you would make to the type syntax and the typing rules.
+\end{parts}
+\end{questions}
+\end{document}

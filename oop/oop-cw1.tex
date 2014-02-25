@@ -1,0 +1,135 @@
+\documentclass[10pt,a4paper,fleqn]{exam}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{titlesec}
+
+\usepackage[sc]{mathpazo}
+\linespread{1.05}         % Palatino needs more leading (space between lines)
+\usepackage[T1]{fontenc}
+
+% some format settings
+% for hard-bound final submission, use:
+%\setlength{\oddsidemargin}{4.6mm}     % 30 mm left margin - 1 in
+% for soft-bound version and techreport, use instead:
+\setlength{\oddsidemargin}{-0.4mm}    % 25 mm left margin - 1 in
+\setlength{\evensidemargin}{\oddsidemargin}
+\setlength{\topmargin}{-5.4mm}        % 20 mm top margin - 1 in
+\setlength{\textwidth}{160mm}         % 20/25 mm right margin
+\setlength{\textheight}{237mm}        % 20 mm bottom margin
+\setlength{\headheight}{5mm}
+\setlength{\headsep}{5mm}
+\setlength{\parindent}{0mm}
+\setlength{\parskip}{\medskipamount}
+\renewcommand\baselinestretch{1.2} % thesis format (not needed for techreport)
+% don't let large figures hijack entire pages
+\renewcommand\topfraction{.9}
+\renewcommand\textfraction{.1}
+\renewcommand\floatpagefraction{.8}
+
+\pagestyle{headandfoot}
+%\pointsinrightmargin
+%\pointname{ marks}
+%\marginpointname{ marks}
+
+\marksnotpoints 
+
+\titlelabel{\llap{\thetitle\quad}}
+
+\begin{document}
+
+\begin{center}
+\Large Exercise sheet 1 \\
+\LARGE Object-oriented programming 
+\end{center}
+
+\hrule
+
+\vspace{0.5cm}
+
+This exercise sheet roughly covers the first two weeks of OOP lectures. 
+
+\begin{questions}
+
+\section{From functional to object-oriented programming}
+
+%\question Explain the difference (if any) between polymorphism in ML and in object-oriented languages.
+%\question What is the difference between functions and methods?
+\question Consider the following definition of the factorial function in ML:
+\begin{displaymath}
+\mathbf{fun}~\mathit{factorial}~n = \mathbf{if}~n = 0~\mathbf{then}~1~\mathbf{else}~n * \mathit{factorial}~(n-1)
+\end{displaymath}
+\begin{parts}
+\part Translate this function into a corresponding Java method.
+\part Suggest why the corresponding Java method may fail for large values of $n$ and propose a better implementation of the factorial function in Java.
+\end{parts}
+\question Below is the skeleton for a Java method which should initialise a unit matrix of size $n \times n$. Complete the definition by replacing the $???$ with the missing code.
+\begin{displaymath}
+\mathbf{public}~\mathbf{static}~\mathbf{float}[][]~\mathit{unit}(\mathbf{int}~n)~\{~???~\}
+\end{displaymath}
+\question Below is the skeleton for a Java method which transposes a $n \times n$ matrix of values of type $\mathbf{float}$. Complete the definition by replacing the $???$ with the missing code. Your solution should use $\mathcal{O}(1)$ additional space.
+\begin{displaymath}
+\mathbf{public}~\mathbf{static}~\mathbf{void}~\mathit{transpose}(\mathbf{float}[][]~a)~\{~???~\}
+\end{displaymath}
+
+\section{References and pointers}
+
+\question What is the calling convention used by ML and how does it work?
+\question Describe \emph{one} calling convention other than the one used by ML.
+\question Below is an attempt to write a procedure in C++ which doubles the value of the argument it is given:
+\begin{displaymath}
+\begin{array}{l}
+\mathbf{void}~\mathit{double}(\mathbf{int}~x)~\{ \\
+\quad x = x*2;\\
+\}
+\end{array}
+\end{displaymath}
+\begin{parts}
+\part Suppose that this procedure is called as follows:
+\begin{displaymath}
+\begin{array}{l}
+\mathbf{int}~x = 23; \\
+\mathit{double}(x); \\
+\mathit{printf}(\texttt{"\%d"},x);
+\end{array}
+\end{displaymath}
+What is the output of this program and why? The output of the program is likely not what the person who wrote $\mathit{double}$ intended. Change the definition of $\mathit{double}$ to produce the correct result, without changing the return type. What else do you need to change to make your revised procedure work?
+%\part If the output of the program in the previous part was 46, change the definition of $\mathit{double}$ so that the program prints 23. Otherwise, change the definition so that the program prints 46. Do \emph{not} change the return type of $\mathit{double}$. You may edit the code from part (a).
+\part You now want to translate your revised $\mathit{double}$ procedure to Java. Show how this can be done.
+\end{parts}
+\question Suppose you have an array which was declared using $\mathbf{int}[]~\mathit{test}$. We assume that all of the values in this array are initialised to 0. Write some Java code to demonstrate that $\mathit{test}$ is a reference.
+\question Pointers may be set to $\mathit{NULL}$ to indicate that they are not pointing to anything useful.
+\begin{parts}
+\part Compare this approach with the use of the option type in ML whose definition is given below:
+\begin{displaymath}
+\mathbf{datatype}~'a~option = \mathit{NONE} \mid \mathit{SOME}~\mathbf{of}~'a
+\end{displaymath}
+\part How do references relate to the above?
+\end{parts}
+\question You have a friend who is a PhD student in the programming languages research group. He proposes a \emph{functional} language in which all variables are passed by reference. Discuss to what extent this makes sense (if at all) and why?
+
+
+%\question You have a friend who is a web developer for a startup in Wales. He argues that there is no point in functional programming, because object-oriented programming is far superior. Discuss to what extent you would agree or disagree with him.
+
+\section{Classes}
+
+\question Below is an ML representation of a 3D vector:
+\begin{displaymath}
+\mathbf{datatype}~\mathit{vector3D} = \mathit{V3D}~\mathbf{of}~\mathit{real} * \mathit{real} * \mathit{real};
+\end{displaymath}
+\begin{parts}
+\part Write a class in Java which corresponds to this data type.
+\part You are given the following function which adds up two vectors in ML:
+\begin{displaymath}
+\mathbf{fun}~\mathit{add}~(\mathit{V3D}(x,y,z))~(\mathit{V3D}(a,b,c)) = \mathit{V3D}(x+a,y+b,z+c);
+\end{displaymath}
+Now add an $\mathit{add}$ method to your vector class in Java. Explain at least \emph{four} different approaches to doing this.
+\end{parts}
+\question Show how ML's $\mathit{option}$ type can be implemented in an object-oriented language using generics.
+\question Implement linked lists in Java. Your implementation should support adding/removing elements from the head of the list, retrieving the head (without removing it), and obtaining the $n^{\text{th}}$ element. \emph{Hint}: you may find it useful to define a $\mathit{LinkedList}$ class as well as a $\mathit{LinkedListItem}$ class.
+\question Implement binary trees in Java. Note that the binary trees do \emph{not} need to be balanced. Your implementation should support insertions and lookups. 
+
+\end{questions}
+\end{document}

@@ -1,0 +1,84 @@
+\ProvidesPackage{fancyeq}
+
+\usepackage{amsmath}
+%\usepackage{polytable}
+
+\newcommand{\figrule}{\begin{center}\hrule\end{center}}
+
+\newcommand{\lastexpr}[1]{&\quad #1}
+\newcommand{\expr}[1]{\lastexpr{#1}\\}
+\newcommand{\hinte}[2]{&#1\qquad\text{\{\quad\ #2 \quad\}}\\}
+\newcommand{\hint}[1]{\hinte{=}{#1}}
+\newcommand{\set}[1]{\{\,#1\,\}}
+\newcommand{\betared}{\underset{\beta}{\Rightarrow}}
+\newcommand{\betaeqv}{\underset{\beta}{\Leftrightarrow}}
+  
+\newcommand{\haskellCaption}{}
+\newcommand{\haskellLabel}{}
+
+\newenvironment{haskell}[2]
+  {
+    \renewcommand{\haskellCaption}{#1}
+    \renewcommand{\haskellLabel}{#2}
+    \begin{figure}[h]
+    \figrule
+    \[
+    \begin{array}{ll}
+  }
+  {
+    \end{array}
+    \]
+    \caption{\haskellCaption}
+    \label{\haskellLabel}
+    \figrule
+    \end{figure}
+  }
+ 
+\newcommand{\fancyfigCaption}{}
+\newcommand{\fancyfigLabel}{}  
+  
+\newenvironment{fancyeq}[3]
+  {
+    \renewcommand{\fancyfigCaption}{#1}
+    \renewcommand{\fancyfigLabel}{#2}
+    \begin{figure}[h]
+    \figrule
+    \[
+    \begin{array}{#3}
+  }
+  {
+    \end{array}
+    \]
+    \caption{\fancyfigCaption}
+    \label{\fancyfigLabel}
+    \figrule
+    \end{figure}
+  }
+  
+  
+\newenvironment{fancyfig}[2]
+  {
+    \renewcommand{\fancyfigCaption}{#1}
+    \renewcommand{\fancyfigLabel}{#2}
+    \begin{figure}[h]
+    \figrule
+  }
+  {
+    \caption{\fancyfigCaption}
+    \label{\fancyfigLabel}
+    \figrule
+    \end{figure}
+  }
+\newcommand{\hseq}[1]{\begin{array}{lcl}#1\end{array}}
+\newcommand{\hsdef}[1]{\begin{array}{l}#1\end{array}}
+
+  
+\newcommand{\hslist}[1]{[\mskip1.5mu #1 \mskip1.5mu]}
+\newcommand{\bind}{\gg\!\!=}
+\newcommand{\append}{\makebox[15pt]{+\kern-0.5ex+}}
+  
+%\newenvironment{fancyfig}[2]
+%{\begin{figure}[h]\vspace{5pt}
+%\renewcommand{\fancyfigCaption}{#1}
+%\renewcommand{\fancyfigLabel}{#2}}
+%{\vspace{-17pt}\caption{\fancyfigCaption}\label{\fancyfigLabel}\end{figure}}

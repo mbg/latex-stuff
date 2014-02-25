@@ -1,0 +1,200 @@
+\documentclass[10pt,a4paper,fleqn]{exam}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{fancyeq}
+\usepackage{tikz}
+\usepackage{tikz-uml}
+
+\usepackage[sc]{mathpazo}
+\linespread{1.05}         % Palatino needs more leading (space between lines)
+\usepackage[T1]{fontenc}
+
+% some format settings
+% for hard-bound final submission, use:
+%\setlength{\oddsidemargin}{4.6mm}     % 30 mm left margin - 1 in
+% for soft-bound version and techreport, use instead:
+\setlength{\oddsidemargin}{-0.4mm}    % 25 mm left margin - 1 in
+\setlength{\evensidemargin}{\oddsidemargin}
+\setlength{\topmargin}{-5.4mm}        % 20 mm top margin - 1 in
+\setlength{\textwidth}{160mm}         % 20/25 mm right margin
+\setlength{\textheight}{237mm}        % 20 mm bottom margin
+\setlength{\headheight}{5mm}
+\setlength{\headsep}{5mm}
+\setlength{\parindent}{0mm}
+\setlength{\parskip}{\medskipamount}
+\renewcommand\baselinestretch{1.2} % thesis format (not needed for techreport)
+% don't let large figures hijack entire pages
+\renewcommand\topfraction{.9}
+\renewcommand\textfraction{.1}
+\renewcommand\floatpagefraction{.8}
+
+\pagestyle{headandfoot}
+%\pointsinrightmargin
+%\pointname{ marks}
+%\marginpointname{ marks}
+
+\marksnotpoints 
+
+\hypersetup{  
+  urlcolor=black,
+  linkcolor=black,
+  colorlinks=true  
+}
+
+\titlelabel{\llap{\thetitle\quad}}
+
+\newcommand {\lbrac} {\makebox[0pt]{[\kern-1ex[}}
+\newcommand {\rbrac} {\makebox[0pt]{]\kern-1ex]}}
+\newcommand{\denote}[1]{\lbrac~#1~\rbrac}
+
+\begin{document}
+
+\begin{center}
+\Large Exercise sheet 4 \\
+\LARGE Object-oriented programming 
+\end{center}
+
+\hrule
+
+\vspace{0.5cm}
+
+More often than not, large software systems are not developed from scratch, but instead start with many smaller, existing libraries. Therefore, in practice, you will often be writing libraries for other people to use or as part of a larger project you are working on. In this exercise, we will be designing and implementing such a library. We will pay attention to the use of design patterns, access modifiers, and other Software Engineering voodoo you need to know. 
+
+Computer games are often built on top of \emph{game engines}, libraries which contain all the required tools game developers need to make games. We will write such a library for simple, text-based role-playing games. To begin, let us watch the following video for inspiration:
+
+\url{http://www.youtube.com/watch?v=TancpHm4f4A}
+
+Your game engine will provide you with all the required classes to make your own ``adventures''. The player will interact with the game via the standard input/output. For example, part of a game session may look like this (where > is used to indicate lines which contain user input):
+
+\begin{verbatim}
+Greetings! What is your name, traveller?
+> Chris
+You reach a gate. In front of the gate is ... a troll!
+> get troll
+You cannot *get* the troll.
+\end{verbatim}
+
+\begin{questions}
+
+\section{Debugging}
+
+\question \emph{This section does not relate to any part of the course, but will make it easier for you to write Java programs in the future. I encourage you to complete this if you have not worked with a debugger before.}
+
+It has been a particularly long day in the lab, consisting of confusion about the correct formula for binomial coefficients, discussions about Haskell, chasing after the supervisor, and general apathy towards Java. As a result, your code for the ``International Conference on Convoluted Java Programs'' is riddled with bugs! Before you can begin to work on your game engine, the code has to be fixed in time for the submission deadline on the next day. 
+\begin{parts}
+\part Download the code from \url{http://www.cl.cam.ac.uk/~mbg28/oop-ex4-code.zip} and add it to a new project in Eclipse (other integrated development environments are available).
+\part You will notice that the code is based on the model solutions for the second exercise sheet. We have added two classes, $\mathit{Subtraction}$ and $\mathit{Sub}$, to add support for subtraction to the language. We also assume that values in the language are now elements of $\mathbb{Z}$ rather than $\mathbb{N}$. Briefly look at the $\mathit{main}$ method of the program (in \texttt{VM.java}) and read the comments. Now run the program. What results are you getting and what is wrong with them?
+\part Since we are getting incorrect results and this is a relatively small program, there are only a few places where an error could have made its way into our code. We also know that there are no problems with the old parts of the code. This leaves us with the following:
+\begin{itemize}
+\item The $\mathit{eval}$ method in the $\mathit{Subtraction}$ class calculates the wrong result. This is not the case -- why?
+\item The $\mathit{comp}$ method in the $\mathit{Subtraction}$ class generates the wrong code.
+\item The $\mathit{exec}$ method in the $\mathit{Sub}$ class does the wrong thing.
+\end{itemize}
+We will debug the last two cases using \emph{breakpoints}. A breakpoint may be placed on most statements in Java. Whenever such an instruction is reached, the Java Virtual Machine will pause and allow you to inspect the values of variables, stack traces, etc. Once you have finished inspecting the state of the program, you may resume the program.
+\begin{subparts}
+\subpart Place a breakpoint on line 20 in \texttt{Subtraction.java} 
+\subpart Place a breakpoint on line 11 in \texttt{Sub.java}
+\end{subparts}
+\part Run the project in debug mode to identify the cause(s) of the bug(s). You can inspect variables by moving the mouse over the name of a variable. For example, when you hit the first breakpoint, Eclipse will tell you that the value of $p$ is something along the lines of
+\begin{verbatim}
+[PUSH 2, PUSH 1, PUSH 1, ADD]
+\end{verbatim}
+This tells you which instructions the program currently consists of. The Java statement on which the breakpoint is placed has not been executed yet, so that there is no $\mathbf{SUB}$ instruction yet. You should hit each breakpoint twice (once for $d$ and once for $e$). Describe your findings.
+\part Fix all bugs. Briefly summarise which parts of the code you changed and why.
+\end{parts}
+
+\section{Root class}
+
+\question Create a new project in Eclipse for your game engine.
+\question State the purpose of the singleton pattern.
+\question What are potential pitfalls in creating an abstract singleton class?
+\question Using the singleton pattern as described in the lecture notes, implement a $\mathit{GameEngine}$ class. Additionally, this class should contain a $\mathbf{void}~\mathit{run}()$ method which you may leave empty for now.
+\question The $\mathit{GameEngine}$ class will be the main way for games to communicate with the game engine. We need to be able to install game-specific behaviour in the engine. Define an abstract $\mathit{Game}$ class with the components listed below. For each of them, you will have to decide: 
+\begin{itemize}
+\item Should it be abstract or not? If not, provide a suitable implementation.
+\item What should the access modifier be?
+\end{itemize}
+There is never one right answer, but you should justify each of your decisions in writing.
+\begin{parts}
+\part A $\mathbf{boolean}~\mathit{initialised}$ field. This field should initially be $\mathit{false}$. It should not be possible to change this value from outside the class.
+\part A $\mathbf{boolean}~\mathit{isInitialised}()$ method which returns the value of $\mathit{initialised}$.
+\part A $\mathbf{String}~\mathit{getGameName()}$ method. This method should return the name of a game. 
+\part A $\mathbf{boolean}~\mathit{initResources()}$ method whose purpose is to allow a game to initialise itself. Its result will indicate whether a game has been to initialise itself successfully or not.
+\part A $\mathbf{boolean}~\mathit{init()}$ method which will be called by the $\mathit{GameEngine}$ class when the $\mathit{run}$ method is invoked. This method should allow the game to initialise itself, knowing that the game engine itself is fully initialised. $\mathit{initialised}$ should be set to $\mathit{true}$ if this method is successful.
+\end{parts}
+\question Provide a UML diagram of your $\mathit{Game}$ class.
+\question Extend your $\mathit{GameEngine}$ class with a field of type $\mathit{Game}$, a $\mathit{Game}~\mathit{getGame()}$ method which returns the value of the field, and a $\mathbf{void}$ $\mathit{setGame(Game~g)}$ method which sets the value of the field. You should also extend your $\mathit{run}$ method so that it calls the $\mathit{init}$ method of the $\mathit{Game}$ object. There are now two possible ways in which the $\mathit{run}$ method could fail -- what are they? Introduce exceptions for them.
+\question What is the name of the design pattern which we have used in the previous question?
+
+\section{Managers}
+
+\question Different subsystems of the game engine will be represented by ``managers''. Each manager has a single responsibility and the $\mathit{GameEngine}$ object keeps track of them all.
+\begin{figure}[h]
+\begin{center}
+\begin{tikzpicture} 
+\umlclass[x=0,y=0,type=abstract]{Manager}{-name : string}{
++getName() : string \\
++Manager(string) \\
++\umlvirt{init()} : bool \\
++\umlvirt{update()} : void
+} 
+\end{tikzpicture}
+\end{center}
+\caption{UML diagram for the $\mathit{Manager}$ class.} \label{fig:manager}
+\end{figure}
+\begin{parts}
+\part Define an abstract $\mathit{Manager}$ class. The UML diagram for this class is shown in \autoref{fig:manager}. The string that is given to the constructor as argument should determine the name of the manager.
+\part Extend the $\mathit{GameEngine}$ class with a dictionary where the keys are strings and the values are objects of type $\mathit{Manager}$. This dictionary should initially be empty.
+\part Extend the $\mathit{GameEngine}$ class with a $\mathbf{void}~\mathit{registerManager}(\mathit{Manager}~m)$ method which adds the given manager to the dictionary. There are two error conditions in this method which you will need to cover with exceptions.
+\part Extend the $\mathit{GameEngine}$ class with a $\mathit{Manager}~\mathit{getManager}(\mathit{String}~\mathit{name})$ method which should retrieve a manager from the dictionary or return $\mathit{null}$ if there is no manager with the specified name.
+\part Modify the $\mathit{run}$ method of your $\mathit{GameEngine}$ class so that the $\mathit{init}$ method of each manager in the dictionary is called before the $\mathit{init}$ method of the $\mathit{Game}$ object is called. An exception should be thrown if one of the calls to $\mathit{init}$ returns $\mathit{false}$.
+\end{parts}
+\question The first of our managers will be the \emph{input manager}. Its responsibility will be to read the player's input and to convert it into a $\mathit{Command}$ which can then be processed by another manager.
+\begin{parts}
+\part Define the $\mathit{Command}$ class. It should contain three fields: one of type $\mathbf{String}$ which will store the name of the command, one of type $\mathbf{String}[]$ which will store the command's arguments, and one of type $\mathbf{boolean}$ which will store a value indicating whether the command has been processed by a manager. The values of the first two fields should be set via a constructor and the value of the third should initially be $\mathit{false}$. There should be getters for all three fields, but no setters. Additionally, there should be a $\mathit{markAsProcessed}$ method which sets the third field to $\mathit{true}$.
+\part Define the $\mathit{InputManager}$ class, which should extend $\mathit{Manager}$. The class should contain a single field of type $\mathit{Command}$ called $\mathit{lastCommand}$, initially $\mathit{null}$, and a getter for it. The $\mathit{init}$ method should just return $\mathit{true}$. The $\mathit{update}$ method should do the following:
+\begin{itemize}
+\item If the field of type $\mathit{Command}$ is not $\mathit{null}$ and the command has not been processed (\emph{i.e.} the field of type $\mathbf{boolean}$ is $\mathit{false}$), then a message similar to the following should be written to the standard output where \texttt{name} should be replaced with the value of the command's $\mathbf{String}$ field:
+\begin{verbatim}
+Unknown command: name
+\end{verbatim}
+\item In any case, you should keep reading lines from the standard input until the input is not empty.
+\item Split the input string into an array using whitespaces as separators.
+\item Construct a new object of type $\mathit{Command}$ where the first argument is the first element of the input array, and the second arguments is an array of all remaining elements.
+\item Set $\mathit{lastCommand}$ to the $\mathit{Command}$ object you have just created.
+\end{itemize}
+You can read from the standard input using:
+\begin{displaymath}
+\begin{array}{lcl}
+\mathit{Scanner}~\mathit{sc} & = & \mathbf{new}~\mathit{Scanner}(\mathit{System.in});\\
+\mathbf{String}~\mathit{input} & = & \mathit{sc.nextLine}();
+\end{array}
+\end{displaymath}
+You can split a string into an array using:
+\begin{displaymath}
+\begin{array}{lcl}
+\mathbf{String}[]~\mathit{parts} & = & \mathit{input.split}(\mathtt{"~"});
+\end{array}
+\end{displaymath}
+\end{parts}
+\question Define the $\mathit{InventoryManager}$ class, which should extend $\mathit{Manager}$. This class should keep track of the player's inventory. It is up to you how you wish to design this class, but you will likely wish to have a data structure which maps item names to items. You will also have to define what an item is. It should be possible for games to add/remove items from the inventory by name. The $\mathit{init}$ method will likely just return $\mathit{true}$. The $\mathit{update}$ method will probably check if the current command is something like \texttt{use [item] with [name]} where \texttt{[item]} is the name of an item in the inventory and \texttt{[name]} is the name of an object in the level (see below), but it is up to you.
+\question Define an abstract $\mathit{Level}$ class. Levels will contain much of a game's logic. A level should contain two dictionaries where keys have type $\mathbf{String}$: one for adjacent levels, and one for objects in the level that the player can interact with. You may wish to define a new base class/interface for objects which the player can interact with. There should also be a $\mathbf{void}~\mathit{onLoaded}()$ method which can be used to display some story text when the player ``enters'' the level.
+\question Define the $\mathit{LevelManager}$ class, which should extend $\mathit{Manager}$. The exact design of this class is again up to you, but it should implement the strategy design pattern for an object of type $\mathit{Level}$. The level's $\mathit{onLoaded}$ method should be called when a new level is set. The $\mathit{update}$ method should check if the current command is either \texttt{"go [name]"} where \texttt{[name]} is the name of a level adjacent to the current one, or if it some command which indicates that the player wishes to interact with an object in the level (such as \emph{e.g.} \texttt{get} or \texttt{inspect}).
+\question Modify the $\mathit{run}$ method of your $\mathit{GameEngine}$ class so that instances of all three manager classes are created and added to the dictionary of managers, before you loop through all managers to initialise them.
+
+\section{Make a game!}
+
+\question Create a new project in Eclipse (or the IDE of your choice) and import your library from the previous two sections\footnote{For help: \url{http://stackoverflow.com/questions/4962559/import-libraries-in-eclipse}}.
+\question Now make a game using your library! It will suffice to demonstrate that you know how to use your library, but there will be some form of prize for the best game(s). Feel free to modify your managers from the previous section if you need to.
+
+\section*{Submission}
+
+Please submit all your written answers as a PDF. The source code for the game engine should be submitted in a .zip/.jar file (or similar). Submit the game (including engine library and source code for the game) as a .jar which I can then run. The deadline for this exercise is 11:59pm on \textbf{Friday, 10th January 2014}.
+
+\end{questions}
+\end{document}

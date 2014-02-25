@@ -1,0 +1,241 @@
+\documentclass[10pt,a4paper,fleqn]{exam}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{fancyeq}
+\usepackage{tikz}
+%\usepackage{tikz-uml}
+
+\usepackage[sc]{mathpazo}
+\linespread{1.05}         % Palatino needs more leading (space between lines)
+\usepackage[T1]{fontenc}
+
+% some format settings
+% for hard-bound final submission, use:
+%\setlength{\oddsidemargin}{4.6mm}     % 30 mm left margin - 1 in
+% for soft-bound version and techreport, use instead:
+\setlength{\oddsidemargin}{-0.4mm}    % 25 mm left margin - 1 in
+\setlength{\evensidemargin}{\oddsidemargin}
+\setlength{\topmargin}{-5.4mm}        % 20 mm top margin - 1 in
+\setlength{\textwidth}{160mm}         % 20/25 mm right margin
+\setlength{\textheight}{237mm}        % 20 mm bottom margin
+\setlength{\headheight}{5mm}
+\setlength{\headsep}{5mm}
+\setlength{\parindent}{0mm}
+\setlength{\parskip}{\medskipamount}
+\renewcommand\baselinestretch{1.2} % thesis format (not needed for techreport)
+% don't let large figures hijack entire pages
+\renewcommand\topfraction{.9}
+\renewcommand\textfraction{.1}
+\renewcommand\floatpagefraction{.8}
+
+\pagestyle{headandfoot}
+%\pointsinrightmargin
+%\pointname{ marks}
+%\marginpointname{ marks}
+
+\marksnotpoints 
+
+\hypersetup{  
+  urlcolor=black,
+  linkcolor=black,
+  colorlinks=true  
+}
+
+\titlelabel{\llap{\thetitle\quad}}
+
+\newcommand {\lbrac} {\makebox[0pt]{[\kern-1ex[}}
+\newcommand {\rbrac} {\makebox[0pt]{]\kern-1ex]}}
+\newcommand{\denote}[1]{\lbrac~#1~\rbrac}
+
+\begin{document}
+
+\begin{center}
+\Large Algorithms \\
+\LARGE \textbf{Exercise 1: Complexity and sorting} \\
+\end{center}
+
+\hrule
+
+\vspace{0.5cm}
+
+
+\begin{questions}
+
+\section{Properties of algorithms}
+
+\question You have started an internship in the software engineering group at Aperture Science, where your expert knowledge on the properties of algorithms is required to kickstart a couple of new projects. Below, you will be given the constraints for each project as well as a selection of algorithms. Discuss which algorithm you think is the most suitable one for each project. As part of a compulsory test protocol, you must also justify your answers.
+\begin{parts}
+\part The Aperture Science Potato Pi is a mobile, starch-based computer whose computational power vastly outweighs its memory. For its intended purpose of accompanying test subjects through optional test protocols, an algorithm is required which can generate new recipes for cake. The following three algorithms have been proposed at the most recent bring-your-daughter-to-work day:
+\begin{subparts}
+\subpart \emph{quick rhubarb} has a worst-case time complexity in $\mathcal{O}(n!)$ and a worst-case space complexity in $\mathcal{O}(1)$.
+\subpart \emph{merge rhubarb} has a worst-case time complexity in $\Omega(1)$ and a worst-case space complexity in $\Omega(1)$.
+\subpart \emph{shuffle rhubarb} has a worst-case time complexity in $\mathcal{O}(\log n)$ and a worst-case space complexity in $\mathcal{O}(n^3)$.
+\end{subparts}
+\part The Aperture Science Weighted Vapour Box will bring PC gaming to test chambers, but each Weighted Vapour Box will have different hardware specifications. The operating system of the Weighted Vapour Box will have to monitor a test subject's performance at all times in order to detect when motivating messages such as ``There is a 5\% chance that the next question will not involve Java'' are required. Which of the following algorithms is the most suitable?
+\begin{subparts}
+\subpart \emph{binary rhubarb} has a worst-case time complexity in $\Theta(n^2)$ and a worst-case space complexity in $\Theta(n)$.
+\subpart \emph{heap rhubarb} has a worst-case time complexity in $o(n^2)$ and a worst-case space complexity in $\Theta(n \log n)$.
+\subpart \emph{priority rhubarb} has a worst-case time complexity in $\mathcal{O}(2^n)$ and a worst-case space complexity in $\Omega(n)$.
+\end{subparts}
+\part The Aperture Science £500 Heavy Angry Turrets Machine is a wearable computing device which actively listens for voice commands. The CPU consumes more energy the more it is being utilised, while the built-in memory always requires a constant amount of energy.
+\begin{subparts}
+\subpart \emph{circular rhubarb} has a best-case time complexity in $\Theta(1)$ and a best-case space complexity in $\Theta(1)$.
+\subpart \emph{selection rhubarb} has an average-case time complexity in $\mathcal{O}(n^2)$ and a worst-case space complexity in $O(n \log n)$.
+\subpart \emph{bubble rhubarb} has a worst-case time complexity in $\mathcal{O}(n^3)$ and an average-cast space complexity in $\Theta(n)$.
+\end{subparts}
+\end{parts}
+\question Describe each of the following functions in terms of $\mathcal{O}(g(n))$ for some $g(n)$.
+\begin{parts}
+\part $f(n) = 4 * 3 + 2$
+\part $f(n) = 2n + 7$
+\part $f(n) = 8n * n + n$
+\part $f(n) = n^2 + \log n$
+\end{parts}
+\question Suppose that you are writing software for a real time system. \emph{I.e.} you are required to design algorithms which need to terminate within a set amount of time. Using asymptotic notation, what is the ideal time complexity for such algorithms?
+\question Suppose that we are using a fictional, functional programming language called DNH with ML-like syntax. In this language, all functions are \emph{pure} in the mathematical sense: given the same set of inputs, a function will always compute the same result. We define a higher-order function called $\mathit{map}$ which applies a function to every element of a list:
+\begin{displaymath}
+\begin{array}{rlcl}
+\mathbf{fun} & \mathit{map}~f~[] & = & [] \\
+ \mid & \mathit{map}~f~(x::\mathit{xs}) & = & f~x :: \mathit{map}~f~xs
+\end{array}
+\end{displaymath}
+\begin{parts}
+\part A student at a \emph{different} university is asked to apply a function $g$, followed by a function $f$ to elements of a list $xs$. The student defines the following:
+\begin{displaymath}
+\mathit{map}~f~(\mathit{map}~g~\mathit{xs})
+\end{displaymath}
+How many loops are there and how many iterations are there in total?
+\part Propose a better solution. Explain why your solution is better.
+\part (Advanced) Prove using induction on lists that your solution produces the same results.
+\end{parts}
+
+\section{Revenge of Hutton's Razor}
+
+\question The asymptotic analysis of programs usually requires us to ``count instructions''. In other words, we need to find functions which describe how many instructions an algorithm will require with respect to the size of its input. To demonstrate why this is tricky, recall\footnote{Or look at \url{http://www.cl.cam.ac.uk/~mbg28/oop-ex2.pdf}} the definition of Hutton's Razor from the second OOP coursework. We will now extend the language with a multiplication operator and a single immutable variable named $n$. In this new form, we will think of every expression as a function of $n$ even if $n$ is not used.
+\begin{displaymath}
+\begin{array}{lcl}
+\mathit{e} & = & \mathit{e}+\mathit{e} \mid \mathit{e}*\mathit{e} \mid v \in \mathbb{N} \mid n 
+\end{array}
+\end{displaymath}
+The evaluation function has been updated with cases for the new types of expressions. We have also given it a new parameter named $x$ which represents the value of the $n$ variable.
+\begin{displaymath}
+\begin{array}{lccl}
+\denote{\cdot} & & : & e \to \mathbb{N} \to \mathbb{N}\\
+\denote{v}~ & x & = & v \\
+\denote{n}~ & x & = & x \\
+\denote{e_0 + e_1}~ & x & = & \denote{e_0}~~x + ~\denote{e_1}~~x \\
+\denote{e_0 * e_1}~ & x & = & \denote{e_0}~~x * ~\denote{e_1}~~x \\
+\end{array}
+\end{displaymath}
+As an example, let us evaluate $4 + (8 * n)$ using the evaluation function. Note that the evaluation function now requires two arguments: an expression to evaluate and a value for $n$. We arbitrarily choose 42 as the value for $n$:
+\allowdisplaybreaks
+\begin{align*}
+\expr{\denote{4 + (8 * n)}~~42}
+\hint{1. applying $~\denote{\cdot}~$ using the case for addition }
+\expr{\denote{4}~~42 + ~\denote{8 * n}~~42}
+\hint{2. applying $~\denote{\cdot}~$ using the case for values }
+\expr{4 + ~\denote{8 * n}~~42}
+\hint{3. applying $~\denote{\cdot}~$ using the case for multiplication }
+\expr{4 + (~\denote{8}~~42 * ~\denote{n}~~42)}
+\hint{4. applying $~\denote{\cdot}~$ using the case for values }
+\expr{4 + (8 * ~\denote{n}~~42)}
+\hint{5. applying $~\denote{\cdot}~$ using the case for variables }
+\expr{4 + (8 * 42)}
+\hint{6. arithmetic}
+\expr{4 + 336}
+\hint{7. arithmetic}
+\lastexpr{340}
+\end{align*}
+For all natural numbers $n$, describe how many evaluation steps each of the following expressions will require in terms of $\mathcal{O}(g(n))$ for some function $g(n)$. Our previous example, $\denote{4 + (8 * n)}~~42$ required 7 evaluation steps.
+\begin{parts}
+\part $\denote{4 + 8}~~n$
+\part $\denote{23 * 42}~~n$
+\part $\denote{n * 15}~~n$
+\part $\denote{n * (n * 16)}~~n$
+\end{parts}
+\question We now wish to compile these new forms of expressions to machine code for our abstract machine. In order to support the $n$ variable, we make the following changes:
+\begin{itemize}
+\item We introduce an immutable register which stores the value of $n$ and a $\mathbf{VAR}$ instruction which pushes the value of that register onto the stack.
+\end{itemize}
+To make things interesting, we won't implement multiplication as a single instruction. Instead, we will make the following changes so that multiplication can be performed using repeated addition:
+\begin{itemize}
+\item We introduce a program counter (a register) which stores the index of the instruction we are currently executing.
+\item We add a $\mathbf{POP}$ instruction which pops a value off the stack and discards it.
+\item We add a $\mathbf{SUB}$ instruction which pops two values off the stack, subtracts the second value from the first and pushes the result back onto the stack.
+\item We add a $\mathbf{JUMP}~\mathit{v}$ instruction which adds $v$ to the program counter.
+\item We add a $\mathbf{JUMPZ}~\mathit{v}$ instruction which adds $v$ to the program counter if the value on the top of the stack is 0.
+\item We add a $\mathbf{LOAD}~\mathit{v}$ instruction which looks up the $v$th value on the stack (from the top down) and pushes that value onto the stack.
+\item We add a $\mathbf{STORE}~\mathit{v}$ instruction which pops a value off the stack and stores it in the $v$th position on the stack.
+\end{itemize}   
+The compilation rules for our new language are shown in \autoref{fig:rules}. Multiplication now works as follows: first we push 0, which represents the intermediate result of the multiplication. Then we push the two operands onto the stack. We will use the second operand as a counter. If the second operand is 0, we jump 8 instructions ahead ($\mathbf{JUMP}~7$, because the program counter will be incremented by 1 after we have executed the $\mathbf{JUMP}$ instruction) to the first of the two $\mathbf{POP}$ instructions. These instructions remove the two operands from the stack and leave us with the result. If the second operand/counter is not zero, we decrement it by one using $\mathbf{PUSH}~1; \mathbf{SUB}$. We then add the first operand to the intermediate result using $\mathbf{LOAD}~{-2}; \mathbf{LOAD}~{-2}; \mathbf{ADD}$ and overwrite the intermediate result with the resulting value using $\mathbf{STORE}~{-3}$.
+\begin{figure}
+\hrulefill
+\begin{displaymath}
+\begin{array}{lcl}
+C~\denote{\cdot} & : & e \to p \\
+C~\denote{v} & = & \mathbf{PUSH}~v \\
+C~\denote{n} & = & \mathbf{VAR} \\
+C~\denote{e_0 + e_1} & = & C~\denote{e_1}~; \\
+                     &   & C~\denote{e_0}~; \\ 
+                     &   & \mathbf{ADD} \\
+C~\denote{e_0 * e_1} & = & \mathbf{PUSH}~0; \\
+                     &   & C~\denote{e_1}~; \\ 
+                     &   & C~\denote{e_0}~; \\ 
+                     &   & \mathbf{JMPZ}~7; \\ 
+                     &   & \mathbf{PUSH}~{1}; \\
+                     &   & \mathbf{SUB}; \\
+                     &   & \mathbf{LOAD}~{-2}; \\ 
+                     &   & \mathbf{LOAD}~{-2}; \\ 
+                     &   & \mathbf{ADD}; \\
+                     &   & \mathbf{STORE}~{-3}; \\
+                     &   & \mathbf{JMP}~{-8}; \\
+                     &   & \mathbf{POP}; \\
+                     &   & \mathbf{POP}; 
+\end{array}
+\end{displaymath}
+\caption{Compilation rules for our language} \label{fig:rules}
+\hrulefill
+\end{figure}
+\begin{parts}
+\part Apply $C~\denote{\cdot}~$ to each of the four expressions from the previous question and show the resulting code.
+\part Describe the worst-case time complexity of the code for each expression. 
+\part Are your answers different than for the worst-case time complexities of the expressions? If so, why? Discuss the implications of your answers.
+\end{parts}
+
+\section{Sorting}
+
+\question Below is the ML code for a Quicksort-like algorithm:
+\begin{displaymath}
+\begin{array}{rlcl}
+\mathbf{fun} & \mathit{quick}~[] & = & [] \\
+  \mid & \mathit{quick}~[x] & = & [x] \\
+  \mid & \mathit{quick}~(a::bs) & = & \mathbf{let} \begin{array}[t]{rlcl}
+   \mathbf{fun} & \mathit{partition}~(\mathit{left},\mathit{right},[]) : \mathit{real}~\mathit{list} & = & (\mathit{quick}~\mathit{left})~@~(a :: \mathit{quick}~\mathit{right}) \\
+              | & \mathit{partition}~(\mathit{left},\mathit{right}, x::\mathit{xs}) & = &  \mathbf{if}~x \leq a~\mathbf{then}~\mathit{partition}~(x::\mathit{left}, \mathit{right}, \mathit{xs}) \\
+                &                                                          &   & \mathbf{else}~\mathit{partition}~(\mathit{left}, x::\mathit{right}, \mathit{xs})
+  \end{array} \\
+      &                  & & \mathbf{in}~\mathit{partition}~([],[],bs)~\mathbf{end};
+\end{array}
+\end{displaymath}
+What is the \emph{space} complexity of this implementation? Explain your answer using extracts from the code.
+\question Now implement Quicksort in Java, but using only $\mathcal{O}(\log n)$ additional space. Explain why your solution meets this requirement.
+\question The real performance of a sorting algorithm often depends not only on the input size, but also on the order of the elements. Suppose that you have just designed a new sorting algorithm which you believe is much better than any existing one. You now wish to test how it performs on various types of data. Describe the different data sets you would use.
+\question Suppose that you have a function called $\mathit{isSorted}$ which tests if a list is sorted. Do you think it would make sense to call this function first before attempting to sort anything? Explain.
+%\question Define a function in ML which tests whether a given list is sorted in ascending order:
+%\begin{displaymath}
+%\begin{array}{lcl}
+%\mathbf{fun}~\mathit{sorted} & : & \mathit{real}~\mathit{list} \to \mathit{bool}
+%\end{array}
+%\end{displaymath}
+%\question (Advanced) Prove using induction on lists that
+%\begin{displaymath}
+%\forall \mathit{xs} : \mathit{real}~\mathit{list}.\mathit{sorted}(\mathit{quick}~\mathit{xs}) == \mathit{true}
+%\end{displaymath} 
+%\emph{Hint}: case-analysis of some expressions may help if you get stuck
+\end{questions}
+\end{document}

@@ -1,0 +1,166 @@
+\documentclass[10pt,a4paper,fleqn]{exam}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{fancyeq}
+
+\usepackage[sc]{mathpazo}
+\linespread{1.05}         % Palatino needs more leading (space between lines)
+\usepackage[T1]{fontenc}
+
+% some format settings
+% for hard-bound final submission, use:
+%\setlength{\oddsidemargin}{4.6mm}     % 30 mm left margin - 1 in
+% for soft-bound version and techreport, use instead:
+\setlength{\oddsidemargin}{-0.4mm}    % 25 mm left margin - 1 in
+\setlength{\evensidemargin}{\oddsidemargin}
+\setlength{\topmargin}{-5.4mm}        % 20 mm top margin - 1 in
+\setlength{\textwidth}{160mm}         % 20/25 mm right margin
+\setlength{\textheight}{237mm}        % 20 mm bottom margin
+\setlength{\headheight}{5mm}
+\setlength{\headsep}{5mm}
+\setlength{\parindent}{0mm}
+\setlength{\parskip}{\medskipamount}
+\renewcommand\baselinestretch{1.2} % thesis format (not needed for techreport)
+% don't let large figures hijack entire pages
+\renewcommand\topfraction{.9}
+\renewcommand\textfraction{.1}
+\renewcommand\floatpagefraction{.8}
+
+\pagestyle{headandfoot}
+%\pointsinrightmargin
+%\pointname{ marks}
+%\marginpointname{ marks}
+
+\marksnotpoints 
+
+\hypersetup{  
+  urlcolor=black,
+  linkcolor=black,
+  colorlinks=true  
+}
+
+\titlelabel{\llap{\thetitle\quad}}
+
+\newcommand {\lbrac} {\makebox[0pt]{[\kern-1ex[}}
+\newcommand {\rbrac} {\makebox[0pt]{]\kern-1ex]}}
+\newcommand{\denote}[1]{\lbrac~#1~\rbrac}
+
+\begin{document}
+
+\begin{center}
+\Large Exercise sheet 2 \\
+\LARGE Object-oriented programming 
+\end{center}
+
+\hrule
+
+\vspace{0.5cm}
+
+In this exercise you will construct a compiler for a small functional programming language. Here we will think of a compiler in the theoretical sense: a function which translates from a source language to a target language. 
+
+\begin{questions}
+
+\section{Source language}
+
+\question The source language for our compiler will be Hutton's razor:
+\begin{displaymath}
+\begin{array}{l}
+v \in \mathbb{N} \\
+e = e + e \mid v
+\end{array}
+\end{displaymath}
+In other words: values in this language are the natural numbers. An expression is either just a natural number or two sub-expressions with an infix plus symbol. Some valid expressions in this language are $5$, $3 + 7$, and $(4 + 8) + (15 + (16 + 23))$.
+\begin{parts}
+\part Using inheritance, find a suitable representation of this language in Java. That is, define classes which may be used to construct objects which represent expressions in the above language. Natural numbers may be represented using the $\mathbf{int}$ type. You should end up with three classes for this task. \emph{Hint}: remember that you are not yet being asked to perform any arithmetic here -- you just need to be able to represent expressions as objects.
+\part Show how the following expressions may be constructed using your classes:
+\begin{subparts}
+\subpart $8$
+\subpart $23 + 42$
+\subpart $4 + (15 + 16)$
+\end{subparts}
+\end{parts}
+\question Expressions in our language do not currently have a meaning, despite what the obvious interpretations may be. In order to change this, we give it a \emph{denotational semantics}. The idea is that we define an \emph{evaluation} (or \emph{valuation}) function which maps expressions from our language to another domain, such as the natural numbers.
+\begin{displaymath}
+\begin{array}{lcl}
+\denote{\cdot} & : & e \to \mathbb{N}\\
+\denote{v} & = & v \\
+\denote{e_0 + e_1} & = & \denote{e_0}~ + ~\denote{e_1}
+\end{array}
+\end{displaymath}
+Here $~\denote{\cdot}~$ is the (recursive) evaluation function. It maps expressions in our language to natural numbers. This definition may seem confusing at first since the left and right-hand sides of the equations are almost the same, but types help us to understand what is going on: since the evaluation function takes expressions as arguments, they occur in the $~\denote{}~$. The $+$ operator on the right-hand side of the second equation is the addition operator on natural numbers. The two calls to $~\denote{\cdot}~$ return natural numbers, so we use $+$ to add them up in order to return a natural number in the end. As an example, we will calculate $4 + (15 + 16)$ using the evaluation function:
+
+\begin{displaymath}
+\begin{array}{cl}
+\expr{\denote{4 + (15 + 16)}} 
+\hint{second case of $~\denote{\cdot}~$}
+\expr{\denote{4}~ + ~\denote{15 + 16}}
+\hint{first case of $~\denote{\cdot}~$}
+\expr{4 + ~\denote{15 + 16}}
+\hint{second case of $~\denote{\cdot}~$}
+\expr{4 + (~\denote{15}~+~\denote{16}~)}
+\hint{first case, used twice}
+\expr{4 + (15 + 16)}
+\hint{arithmetic}
+\expr{35}
+\end{array}
+\end{displaymath}
+\begin{parts}
+\part Extend your classes from part 1 so that, given an arbitrary expression, we may invoke an $\mathit{eval}$ method on it to calculate the value of the expression.
+\end{parts}
+
+\section{Target language}
+
+\question The target language is for a stack-based abstract machine. Instructions for this machine are defined as:
+\begin{displaymath}
+i = \mathbf{PUSH}~v \mid \mathbf{ADD}
+\end{displaymath}
+\begin{parts}
+\part Find a suitable representation for the target language in Java.
+\part Programs for the abstract machine are sequences of instructions. Formally, we may describe them as:
+\begin{displaymath}
+p =~\cdot~\mid i; p
+\end{displaymath}
+That is, a program is either empty or an instruction followed by more instructions (a program). In other words, programs are just linked lists! You may use your implementation of linked lists from the previous exercise sheet to represent them or you may use an implementation from the Java libraries. Show how to construct the program $\mathbf{PUSH}~3; \mathbf{PUSH}~7; \mathbf{ADD}$ using your classes from part (a).
+\end{parts}
+\question Define a new class, $\mathit{VM}$, which contains a method with the signature:
+\begin{displaymath}
+\mathbf{public}~\mathbf{int}~\mathit{execute}(\mathit{Program}~p)
+\end{displaymath}
+This method should execute the program $p$ using an initially empty stack. The stack may also be represented using a linked list of values of type $\mathbf{int}$. The denotational semantics of the instructions is as follows:
+\begin{itemize}
+\item $\mathbf{PUSH}~v$ pushes the value $v$ on top of the stack
+\item $\mathbf{ADD}$ takes two values off the stack, adds them up, and then pushes the result onto the stack
+\end{itemize}
+Once all instructions have been executed, you should return the value on top of the stack.
+\question Under what circumstances could $\mathit{execute}$ fail? Create a new class derived from $\mathit{Exception}$ and modify your implementation of $\mathit{execute}$ so that an instance of your new exception type is thrown whenever those circumstances occur.
+
+\section{Translation}
+
+\question Finally, we need to convert expressions in the source language to programs using instructions in the target language. For this purpose, we define a compilation function in a similar style as used to define the denotational semantics:
+\begin{displaymath}
+\begin{array}{lcl}
+C~\denote{\cdot} & : & e \to p \\
+C~\denote{v} & = & \mathbf{PUSH}~v \\
+C~\denote{e_0 + e_1} & = & C~\denote{e_1}~;C~\denote{e_0}~;\mathbf{ADD} \\
+\end{array}
+\end{displaymath}
+Here $C~\denote{\cdot}$ is the compilation function. It tells us how to translate an expression into a program. Extend your classes from part 1.(a) with a $\mathit{comp}$ method which implements these translation rules.
+\question Using some test expressions, convince yourself that $e.eval() = vm.execute(e.comp())$ where $e$ is one of your test expressions and $vm$ is an object of type $\mathit{VM}$. Can you construct an expression for which $\mathit{execute}$ will fail?
+
+\section{Bonus exercises}
+
+\emph{Note}: I do not expect you to complete this part of the exercise sheet, but if you have the time / are interested in programming languages, you may attempt some of the ideas which are suggested here.
+
+Now that you have a working implementation of Hutton's razor, you may extend the language with more constructs. A simple extension would be to add operators for different arithmetic operations. A more sophisticated extension would be to extend the language with the $\lambda$-calculus\footnote{\url{http://en.wikipedia.org/wiki/Lambda_calculus}}. That is, the source language would become:
+\begin{displaymath}
+e = \lambda x.e \mid (e~e) \mid x \mid v \mid e+e
+\end{displaymath}
+You may also think about adding values other than numbers. This, in turn, may lead you to add a type system.
+
+\end{questions}
+\end{document}
