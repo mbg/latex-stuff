@@ -1,0 +1,151 @@
+\documentclass[10pt,a4paper]{exam}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{fancyeq}
+\usepackage{tikz}
+%\usepackage{tikz-uml}
+\usepackage{mathpartir}
+\usetikzlibrary{shapes,arrows,backgrounds,positioning}
+
+\tikzset{
+  treenode/.style = {align=center, inner sep=0pt, text centered,
+    font=\sffamily},
+  arn_n/.style = {treenode, circle, black, font=\sffamily\bfseries, draw=black,
+    fill=white, text width=1.5em},% arbre rouge noir, noeud noir
+  arn_r/.style = {treenode, circle, red, draw=red, 
+    text width=1.5em, very thick},% arbre rouge noir, noeud rouge
+  arn_x/.style = {treenode, rectangle, draw=black,
+    minimum width=0.5em, minimum height=0.5em}% arbre rouge noir, nil
+}
+
+\usepackage[sc]{mathpazo}
+\linespread{1.05}         % Palatino needs more leading (space between lines)
+\usepackage[T1]{fontenc}
+
+% some format settings
+% for hard-bound final submission, use:
+%\setlength{\oddsidemargin}{4.6mm}     % 30 mm left margin - 1 in
+% for soft-bound version and techreport, use instead:
+\setlength{\oddsidemargin}{-0.4mm}    % 25 mm left margin - 1 in
+\setlength{\evensidemargin}{\oddsidemargin}
+\setlength{\topmargin}{-5.4mm}        % 20 mm top margin - 1 in
+\setlength{\textwidth}{160mm}         % 20/25 mm right margin
+\setlength{\textheight}{237mm}        % 20 mm bottom margin
+\setlength{\headheight}{5mm}
+\setlength{\headsep}{5mm}
+\setlength{\parindent}{0mm}
+\setlength{\parskip}{\medskipamount}
+\renewcommand\baselinestretch{1.2} % thesis format (not needed for techreport)
+% don't let large figures hijack entire pages
+\renewcommand\topfraction{.9}
+\renewcommand\textfraction{.1}
+\renewcommand\floatpagefraction{.8}
+
+\pagestyle{headandfoot}
+%\pointsinrightmargin
+%\pointname{ marks}
+%\marginpointname{ marks}
+
+\marksnotpoints 
+
+\hypersetup{  
+  urlcolor=black,
+  linkcolor=black,
+  colorlinks=true  
+}
+
+\titlelabel{\llap{\thetitle\quad}}
+
+\newcommand {\lbrac} {\makebox[0pt]{[\kern-1ex[}}
+\newcommand {\rbrac} {\makebox[0pt]{]\kern-1ex]}}
+\newcommand{\denote}[1]{\lbrac~#1~\rbrac}
+
+\begin{document}
+
+\begin{center}
+\Large Algorithms \\
+\LARGE \textbf{Exercise 7: Graph algorithms II} \\
+\end{center}
+
+\hrule
+
+\vspace{0.5cm}
+
+%\begin{center}
+%\emph{Complete SECTION 1 and ONE other section.}
+%\end{center}
+
+\begin{center}
+\emph{Answer SECTION 1 and TWO other sections.}
+\end{center}
+
+\marksnotpoints
+\pointsdroppedatright
+\marksnotpoints
+\marginpointname{ \points}
+
+\begin{questions}
+
+\section{vEB Trees}
+
+\question[2] Draw a proto-vEB node, labelling each of its fields and briefly explaining what each field does. \droppoints
+\question[2] Draw a vEB node, labelling each of its fields and briefly explaining what each field does. \droppoints 
+\question[6] Draw a complete and legible vEB tree holding the values $\set{0,2,4,8,9,10,13,14}$. The correctness of the structure and the accuracy of all fields of all nodes is important. Once done, write each of the values under the leaf record in which it is logically stored. \droppoints 
+\question[10] Consider the task of inserting a value $v$ into a proto-vEB or vEB tree whose root node is $r$. Assume the value is in range and not already in the tree. Write two pieces of high-level pseudocode for $\mathit{insertInProtoVEB}(r,v)$ and $\mathit{insertInVEB}(r,v)$ respectively. Clarity (insert comments where appropriate) will count more than perfect low-level accuracy. Derive the computational complexity of your two procedures using the appropriate recurrence formulae (but solving the recurrences is not required). Explain what specific features of the vEB tree make it faster than the proto-vEB tree for this particular task. \droppoints  
+
+\section{Maximum flow problem}
+
+\question The pseudocode below is a first attempt at a recursive algorithm to enumerate all the paths from the source to sink, in the context of a maximum flow problem.
+\begin{displaymath}
+\begin{array}{l}
+\mathbf{def}~\mathit{allPaths}(\mathit{graph}, \mathit{source}, \mathit{sink}): \\
+\quad \texttt{// Each path is a list of vertices from source to sink, \emph{e.g.}$\hslist{2,4,7}$} \\
+\quad \texttt{// The result is a list of paths, \emph{e.g.}$\hslist{\hslist{2,4,7}, \hslist{2,7}}$, initially empty} \\
+\quad \mathit{result} = \hslist{} \\\\
+\quad \mathbf{if}~\mathit{source} == \mathit{sink}: \\
+\quad \quad \mathit{result}.\mathit{append}(\hslist{\mathit{source}}) \\
+\quad \mathbf{else}:\\
+\quad \quad \mathbf{for}~v~\mathbf{in}~\mathit{graph}.\mathit{verticesAdjacentTo}(\mathit{source}): \\
+\quad \quad \quad \mathbf{for}~\mathit{path}~\mathbf{in}~\mathit{allPaths}(\mathit{graph},v,\mathit{sink}):\\
+\quad \quad \quad \quad \texttt{// Reject paths that revisit the source, else infinite loops} \\
+\quad \quad \quad \quad \mathbf{if}~\mathit{source}~\mathbf{not}~\mathbf{in}~\mathit{path}: \\
+\quad \quad \quad \quad \quad \mathit{result}.\mathit{append}(\hslist{\mathit{source}} + \mathit{path}) \\
+\quad \mathbf{return}~\mathit{result}
+\end{array}
+\end{displaymath}
+
+\begin{parts}
+\part[5] Point out all the bugs you can find, highlighting the failures with test cases. \droppoints 
+\part[10] Correct all the bugs you found, clearly explaining your fixes. Rewrite a corrected and clearly commented version of the pseudocode. \droppoints 
+\part[5] Provide a correctness proof for your new version. \droppoints 
+\end{parts}
+
+\section{Dijkstra's shortest-path algorithm}
+
+\question[4] Describe Dijkstra's shortest-path algorithms, making the priority queue operations explicit. \droppoints
+\question[3] Provide a small example demonstrating that Dijkstra's shortest-path algorithm will not work correctly when negative weights are used on some arcs. \droppoints 
+\question[3] Suppose some arcs in a directed graph have negative weights, and that ${-W}$ is the least negative weight among all arcs. Suppose that we add $W$ to all arcs in the graph to obtain a new graph with non-negative arc weights. Will the resulting graph have the same shortest paths as the original graph? Explain your answer. \droppoints 
+\question For each of the data structures listed below, describe the computational complexity of Dijkstra's shortest-path algorithm when this data structure is used to implement the algorithm's priority queue. Justify your answers.
+\begin{parts}
+\part[2] An unsorted array, indexed by node number. \droppoints
+\part[2] A linked list, sorted by key (in this case a distance estimate). \droppoints 
+\part[2] A binary heap. \droppoints 
+\part[2] A binomial heap. \droppoints 
+\part[2] A Fibonacci heap. \droppoints  
+\end{parts}
+
+\section{Noughts and Crosses}
+
+\question[20] Write a program that allows a human player to play noughts and crosses against the computer, using game trees and a suitable algorithm to ensure that the computer never loses. 
+
+The default size of a noughts and crosses board is 3, but it should be possible to change this to values greater than 3. The human player and the computer take turns, but it should be possible to change who goes first.
+
+Solutions which are particularly elegant and are \emph{algorithmically} faster than my model solution will be awarded a prize. \droppoints 
+
+\end{questions}
+\end{document}
